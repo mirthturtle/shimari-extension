@@ -24,6 +24,6 @@
     },
     "content_scripts": [{
         "js": ["foreground.js"],
-        "matches": ["https://online-go.com/*", "https://mirthturtle.com/*"]
+        "matches": ["https://online-go.com/*", "https://mirthturtle.com/*", "https://www.mirthturtle.com/*"]
     }]
 }

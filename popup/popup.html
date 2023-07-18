@@ -2,14 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="popup.css">
   <title>MirthEx – Extension of Mirth</title>
+
+  <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
-  <p>
-    <span>Login status:</span>
-    <span id="login-status"></span>
-  </p>
+  <div id="not-logged-in">
+    <a id="shimari-link" href="#">
+      <img src="/img/shimari-logo.png" class="shimari-image" alt="Log into Shimari" title="Log into Shimari" />
+    </a>
+    <span id="notlog-text">– Not logged in –</span>
+  </div>
+
+  <div id="logged-in">
+    <a id="shimari-link" href="#">
+      <img src="/img/shimari-logo.png" class="shimari-image" alt="Visit Shimari" title="Visit Shimari" />
+    </a>
+    <p>
+      <span>Logged in as: </span>
+      <span id="username"></span>
+    </p>
+  </div>
+
+  <div id="error-general">
+    <p>
+      <span>An error occurred! Please try again later.</span>
+    </p>
+  </div>
+
+  <div>
+    <ul>
+      <li>Review enforcement</li>
+      <li>Focus enforcement</li>
+      <li>Resign effects</li>
+    </ul>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>

@@ -1,7 +1,26 @@
 body {
-    background-color: #222;
-    color: #eee;
+  background-color: #0a0a0a;
+  color: #eee;
 
-    width: 12rem;
-    height: 8rem;
+  width: 170px;
+  height: 200px;
+  text-align: center;
+}
+
+p, span, strong {
+  cursor: default;
+}
+
+#logged-in, #not-logged-in, #error-general {
+  display: none;
+}
+
+.shimari-image {
+  width: 150px;
+  margin: 10px;
+}
+
+#notlog-text {
+  color: brown;
+  cursor: pointer;
 }
