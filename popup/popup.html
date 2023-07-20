@@ -9,7 +9,7 @@
 
 <body>
   <div id="not-logged-in">
-    <a id="shimari-link" href="#">
+    <a id="shimari-link-nolog" href="#">
       <img src="/img/shimari-logo.png" class="shimari-image" alt="Log into Shimari" title="Log into Shimari" />
     </a>
     <span id="notlog-text">– Not logged in –</span>
@@ -31,12 +31,10 @@
     </p>
   </div>
 
-  <div>
-    <ul>
-      <li>Review enforcement</li>
-      <li>Focus enforcement</li>
-      <li>Resign effects</li>
-    </ul>
+  <div id="status-panel">
+    <p><span id="review-indicator">⚪</span> Review enforcement</p>
+    <p><span id="focus-indicator">⚪</span> Focus enforcement</p>
+    <p><span id="effects-indicator">⚪</span> Resign effects</p>
   </div>
 
   <script src="popup.js"></script>

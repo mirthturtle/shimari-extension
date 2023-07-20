@@ -10,5 +10,9 @@ Open your [Chrome Extensions](chrome://extensions/) panel and turn on Developer 
 
 ### Features
 
-Discipline mode: Not allowed to start new Go game until last one reviewed.
-Resign burst: More visually stunning Resigns on OGS
+- Resign effects: More visually stunning Resigns on OGS
+- Discipline helpers: Not allowed to start new OGS games unless you've
+  - recently reviewed a game
+  - recently completed the Pregame Focus.
+
+More coming soon.
