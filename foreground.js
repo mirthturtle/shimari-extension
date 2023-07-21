@@ -31,13 +31,13 @@ const initiateOGSObserver = () => {
 
   // make initial observation
   if (window.location.href.startsWith("https://online-go.com/play")) {
-    runDisciplineBlocker();
+    refreshForWidget();
   }
 };
 
 function runDisciplineBlocker() {
   // check localstorage for blockers
-  chrome.storage.sync.get(['blocker'], function(items) {
+  chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
     console.log('Discipline blocker:', items);
     if (items.blocker) {
       disablePlayButtons();
@@ -45,7 +45,7 @@ function runDisciplineBlocker() {
       enablePlayButtons();
     }
     removeExistingShimariWidgets();
-    injectShimariWidget(items.blocker);
+    injectShimariWidget(items.logged_in, items.blocker);
   });
 }
 
@@ -54,7 +54,7 @@ function refreshForWidget() {
   chrome.runtime.sendMessage(
     { action: 'refreshForWidget'},
     response => {
-      console.log('response', response);
+      console.log('response from refresh', response);
 
       // redraw the widget
       runDisciplineBlocker();
@@ -62,7 +62,7 @@ function refreshForWidget() {
   );
 }
 
-function injectShimariWidget(blockerMessage) {
+function injectShimariWidget(loggedIn, blockerMessage) {
   // main widget
   var mainWidgetElement = document.createElement('div');
   mainWidgetElement.className = "shimari-main-widget";
@@ -70,10 +70,14 @@ function injectShimariWidget(blockerMessage) {
   // message element
   var messageElement = document.createElement('p');
   messageElement.className = "shimari-message";
-  if (blockerMessage) {
-    messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games/latest\" class=\"shimari-link\">Review</a> your last game.";
+  if (loggedIn) {
+    if (blockerMessage) {
+      messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games/latest\" class=\"shimari-link\" target=\"_blank\">Review</a> your last game.";
+    } else {
+      messageElement.innerHTML = "Have a good game."
+    }
   } else {
-    messageElement.innerHTML = "Have a good game."
+    messageElement.innerHTML = "<a href=\"https://mirthturtle.com/go/login\" class=\"shimari-link\" target=\"_blank\">Log in</a> to activate.";
   }
 
   // logo/button flex area
@@ -137,7 +141,6 @@ function disablePlayButtons() {
   }, 500);
 }
 
-// UNUSED SO FAR
 function enablePlayButtons() {
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {

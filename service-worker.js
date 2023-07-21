@@ -7,40 +7,46 @@ const prod = false;
 const host = prod ? "mirthturtle.com" : "localhost:3000";
 const url = `http${prod ? 's' : ''}://${host}/extension_status`;
 
+// Listen for messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // Returns logged-in status & settings
   if (message.action === "getShimariStatus") {
     const { cookies } = message;
 
-    fetch(url, {
-      headers: {
-        Cookie: cookies
-      },
-      credentials: 'include'
-    })
-    .then((response) => response.json())
-    .then((json) => {
-      console.log('Response from API', json);
-
-      // Save it using the Chrome extension storage API.
-      chrome.storage.sync.set(json, function() {
-        console.log('Status saved.');
-      });
-
-      sendResponse(json);
-    });
+    getStatusWithCookies(cookies, sendResponse);
     return true; // Indicates that the response will be sent asynchronously
 
   } else if( message.action === "goToSite" ) {
     chrome.tabs.update(null, {
       url: 'https://mirthturtle.com/go'
     });
+
   } else if( message.action === "refreshForWidget" ) {
-    // TODO call popup to get cookies and call getShimariStatus above
+    // get cookies and save to storage as above
     console.log('looking to refresh.');
 
-
-
-
-    sendResponse(true);
+    chrome.cookies.getAll({ domain: host }, function (cookies) {
+      getStatusWithCookies(cookies, sendResponse);
+    });
+    return true;
   }
 });
+
+function getStatusWithCookies(cookies, sendResponse) {
+  fetch(url, {
+    headers: {
+      Cookie: cookies
+    },
+    credentials: 'include'
+  })
+  .then((response) => response.json())
+  .then((json) => {
+    console.log('Response from API', json);
+
+    // Save it using the Chrome extension storage API.
+    chrome.storage.sync.set(json, function() {
+      console.log('Status saved.');
+      sendResponse(json);
+    });
+  });
+}
