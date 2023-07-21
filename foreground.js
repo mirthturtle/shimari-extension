@@ -104,15 +104,18 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   // logo image/link
   var shimariLogoLink = document.createElement('a');
   shimariLogoLink.href = "https://mirthturtle.com/go";
+  shimariLogoLink.target = "_blank";
   var shimariLogoImage = document.createElement('img');
   shimariLogoImage.className = "shimari-widget-logo";
   shimariLogoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
   shimariLogoLink.appendChild(shimariLogoImage);
 
   // add items to flex row
-  flexElement.appendChild(flameLink);
   flexElement.appendChild(shimariLogoLink);
-  flexElement.appendChild(refreshLink);
+  flexElement.appendChild(flameLink);
+  if (blockerMessage) {
+    flexElement.appendChild(refreshLink);
+  }
 
   // add all to main widget
   mainWidgetElement.appendChild(flexElement);
