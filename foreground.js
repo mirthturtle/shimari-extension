@@ -134,6 +134,9 @@ function removeExistingShimariWidgets() {
 }
 
 function disablePlayButtons() {
+  if (buttonAutoDisabler) {
+    clearInterval(buttonAutoDisabler);
+  }
   buttonAutoDisabler = setInterval(function() {
     let buttons = document.getElementsByTagName("button");
     for (const button of buttons) {
@@ -145,8 +148,9 @@ function disablePlayButtons() {
 }
 
 function enablePlayButtons() {
-  clearInterval(buttonAutoDisabler);
-
+  if (buttonAutoDisabler) {
+    clearInterval(buttonAutoDisabler);
+  }
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
     button.disabled = false;
