@@ -8,33 +8,23 @@
 </head>
 
 <body>
-  <div id="not-logged-in">
-    <a id="shimari-link-nolog" href="#">
-      <img src="/img/shimari-logo.png" class="shimari-image" alt="Log into Shimari" title="Log into Shimari" />
-    </a>
-    <span id="notlog-text">– Not logged in –</span>
-  </div>
-
-  <div id="logged-in">
-    <a id="shimari-link" href="#">
-      <img src="/img/shimari-logo.png" class="shimari-image" alt="Visit Shimari" title="Visit Shimari" />
-    </a>
-    <p>
-      <span>Logged in as: </span>
-      <span id="username"></span>
-    </p>
-  </div>
-
-  <div id="error-general">
-    <p>
-      <span>An error occurred! Please try again later.</span>
-    </p>
-  </div>
+  <a id="shimari-link" href="#">
+    <img src="/img/shimari-logo.png" class="shimari-image" alt="Visit Shimari" title="Visit Shimari" />
+  </a>
 
   <div id="status-panel">
     <p><span id="review-indicator">⚪</span> Review discipline</p>
     <p><span id="focus-indicator">⚪</span> Focus discipline</p>
     <p><span id="effects-indicator">⚪</span> Gameover effects</p>
+  </div>
+
+  <hr />
+  <div id="footer-bar">
+    <img src="/logo/mirthturtle.png" class="mirthturtle-image" id="turtle-logo" alt="MirthTurtle.com" title="MirthTurtle.com" />
+
+    <span id="notlog-text">– Not logged in –</span>
+    <span id="log-text"></span>
+    <span id="error-general">Error! Try again later.</span>
   </div>
 
   <script src="popup.js"></script>

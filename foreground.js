@@ -145,11 +145,12 @@ function disablePlayButtons() {
 }
 
 function enablePlayButtons() {
+  clearInterval(buttonAutoDisabler);
+
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
     button.disabled = false;
   }
-  clearInterval(buttonAutoDisabler);
 }
 
 window.onload = initiateOGSObserver;

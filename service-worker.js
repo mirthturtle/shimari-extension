@@ -16,15 +16,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     getStatusWithCookies(cookies, sendResponse);
     return true; // Indicates that the response will be sent asynchronously
 
-  } else if( message.action === "goToSite" ) {
+  } else if( message.action === "goToGoSite" ) {
     chrome.tabs.update(null, {
       url: 'https://mirthturtle.com/go'
     });
 
-  } else if( message.action === "refreshForWidget" ) {
-    // get cookies and save to storage as above
-    console.log('looking to refresh.');
+  } else if( message.action === "goToMainSite" ) {
+    chrome.tabs.update(null, {
+      url: 'https://mirthturtle.com'
+    });
 
+  } else if( message.action === "goToGoLogin" ) {
+    chrome.tabs.update(null, {
+      url: 'https://mirthturtle.com/go/login'
+    });
+
+  } else if( message.action === "refreshForWidget" ) {
     chrome.cookies.getAll({ domain: host }, function (cookies) {
       getStatusWithCookies(cookies, sendResponse);
     });

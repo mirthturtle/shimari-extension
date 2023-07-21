@@ -3,7 +3,7 @@ body {
   color: #eee;
 
   width: 170px;
-  height: 200px;
+  height: 220px;
   text-align: center;
 }
 
@@ -11,13 +11,22 @@ p, span, strong {
   cursor: default;
 }
 
-#logged-in, #error-general {
-  display: none;
+hr {
+  border: 0.5px #4f4b44 dashed;
 }
 
-.shimari-image {
-  width: 150px;
-  margin: 10px;
+#footer-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 10px auto;
+}
+
+.mirthturtle-image {
+  width: 30px;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle
 }
 
 #notlog-text {
@@ -25,8 +34,21 @@ p, span, strong {
   cursor: pointer;
 }
 
+#log-text {
+  color: white;
+}
+
+#error-general {
+  display: none;
+}
+
+.shimari-image {
+  width: 140px;
+  margin: 10px;
+}
+
 #status-panel {
   text-align: left;
   margin: 20px auto;
-  width: 135px;
+  width: 130px;
 }
