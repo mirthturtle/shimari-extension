@@ -34,5 +34,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.tabs.update(null, {
       url: 'https://mirthturtle.com/go'
     });
+  } else if( message.action === "refreshForWidget" ) {
+    // TODO call popup to get cookies and call getShimariStatus above
+    console.log('looking to refresh.');
+
+
+
+
+    sendResponse(true);
   }
 });

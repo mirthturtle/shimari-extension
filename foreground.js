@@ -10,7 +10,7 @@ const initiateOGSObserver = () => {
       knownHref = document.location.href;
 
       // discipline blockers
-      if (window.location.href == "https://online-go.com/play") {
+      if (window.location.href.startsWith("https://online-go.com/play")) {
         console.log('On Play page.');
         runDisciplineBlocker();
 
@@ -30,68 +30,100 @@ const initiateOGSObserver = () => {
   console.log('OGS observer activated.');
 
   // make initial observation
-  if (window.location.href == "https://online-go.com/play") {
+  if (window.location.href.startsWith("https://online-go.com/play")) {
     runDisciplineBlocker();
   }
 };
 
-// TODO hook game-endings & do effects, autosync to shimari
-
-
 function runDisciplineBlocker() {
   // check localstorage for blockers
   chrome.storage.sync.get(['blocker'], function(items) {
-    console.log('Settings retrieved', items);
+    console.log('Discipline blocker:', items);
     if (items.blocker) {
       disablePlayButtons();
     } else {
       enablePlayButtons();
     }
+    removeExistingShimariWidgets();
     injectShimariWidget(items.blocker);
   });
 }
 
+  // call service worker to trigger popup & get fresh data in chrome storage
+function refreshForWidget() {
+  chrome.runtime.sendMessage(
+    { action: 'refreshForWidget'},
+    response => {
+      console.log('response', response);
+
+      // redraw the widget
+      runDisciplineBlocker();
+    }
+  );
+}
+
 function injectShimariWidget(blockerMessage) {
-  // make main widget
+  // main widget
   var mainWidgetElement = document.createElement('div');
   mainWidgetElement.className = "shimari-main-widget";
 
-  // make message element
+  // message element
   var messageElement = document.createElement('p');
   messageElement.className = "shimari-message";
   if (blockerMessage) {
-    messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games\" class=\"shimari-link\">Review</a> your last game.";
+    messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games/latest\" class=\"shimari-link\">Review</a> your last game.";
   } else {
     messageElement.innerHTML = "Have a good game."
   }
 
-  // lower flex area
+  // logo/button flex area
   var flexElement = document.createElement('div');
   flexElement.className = "shimari-flex";
 
-  var refreshButton = document.createElement('button');
-  refreshButton.className = "shimari-refresh-button";
-  refreshButton.innerHTML = "refresh";
+  // Flame image/link
+  var flameLink = document.createElement('a');
+  flameLink.href = "https://mirthturtle.com/go/pregame";
+  var flameImage = document.createElement('img');
+  flameImage.className = "shimari-flame-image";
+  flameImage.src = "https://www.mirthturtle.com/shimari-flame.png";
+  flameLink.appendChild(flameImage)
 
+  // refresh image/link # TODO refrech
+  var refreshLink = document.createElement('a');
+  refreshLink.href = "#";
+  refreshLink.onclick = refreshForWidget;
+  var refreshImage = document.createElement('img');
+  refreshImage.className = "shimari-refresh-image";
+  refreshImage.src = "https://www.mirthturtle.com/refresh.svg";
+  refreshLink.appendChild(refreshImage)
+
+  // logo image/link
   var shimariLogoLink = document.createElement('a');
-  shimariLogoLink.href = "https://mirthturtle.com/go/pregame";
-
+  shimariLogoLink.href = "https://mirthturtle.com/go";
   var shimariLogoImage = document.createElement('img');
   shimariLogoImage.className = "shimari-widget-logo";
   shimariLogoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
-
   shimariLogoLink.appendChild(shimariLogoImage);
 
-  flexElement.appendChild( shimariLogoLink );
-  // flexElement.appendChild( refreshButton );
+  // add items to flex row
+  flexElement.appendChild(flameLink);
+  flexElement.appendChild(shimariLogoLink);
+  flexElement.appendChild(refreshLink);
 
   // add all to main widget
-  mainWidgetElement.appendChild( flexElement );
-  mainWidgetElement.appendChild( messageElement );
+  mainWidgetElement.appendChild(flexElement);
+  mainWidgetElement.appendChild(messageElement);
 
   // add widget to page
   destinationElement = document.getElementsByClassName('custom-game-row')[0];
   destinationElement.appendChild(mainWidgetElement);
+}
+
+function removeExistingShimariWidgets() {
+  const widgets = document.querySelectorAll('.shimari-main-widget');
+  widgets.forEach(wid => {
+    wid.remove();
+  });
 }
 
 function disablePlayButtons() {
@@ -105,6 +137,7 @@ function disablePlayButtons() {
   }, 500);
 }
 
+// UNUSED SO FAR
 function enablePlayButtons() {
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {

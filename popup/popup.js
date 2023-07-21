@@ -1,7 +1,8 @@
 const host = "localhost:3000"   // "mirthturtle.com"
 const url = `http://${host}/extension_status`;
 
-chrome.cookies.getAll({ domain: url }, function (cookies) {
+// on popup click, get cookies & send request for info to backend
+chrome.cookies.getAll({ domain: host }, function (cookies) {
   chrome.runtime.sendMessage(
     // calls the service worker
     { action: "getShimariStatus", cookies },
@@ -32,7 +33,7 @@ chrome.cookies.getAll({ domain: url }, function (cookies) {
   );
 });
 
-// Links to site
+// Attach links to site
 let element;
 ['shimari-link', 'nolog', 'notlog-text'].forEach(ele => {
   element = document.getElementById(ele);
@@ -43,4 +44,3 @@ let element;
     }, false);
   }
 });
-
