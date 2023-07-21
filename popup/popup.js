@@ -15,6 +15,11 @@ chrome.cookies.getAll({ domain: url }, function (cookies) {
         document.getElementById('logged-in').style.display = 'block';
         document.getElementById('not-logged-in').style.display = 'none';
 
+        // set the settings statuses
+        document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
+        document.getElementById('focus-indicator').innerHTML   = response.discipline_focus ? '⚪' : '⚫';
+        document.getElementById('effects-indicator').innerHTML = response.resign_effects ? '⚪' : '⚫';
+
       } else if (response.logged_in == false) {
         console.log("Logged out on the popup");
         document.getElementById('not-logged-in').style.display = 'block';
@@ -34,7 +39,7 @@ let element;
   if (element) {
     element.addEventListener('click', function() {
       chrome.runtime.sendMessage(
-        { action: "shimari" });
+        { action: "goToSite" });
     }, false);
   }
 });

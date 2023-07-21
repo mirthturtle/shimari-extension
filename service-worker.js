@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true; // Indicates that the response will be sent asynchronously
 
-  } else if( message.action === "shimari" ) {
+  } else if( message.action === "goToSite" ) {
     chrome.tabs.update(null, {
       url: 'https://mirthturtle.com/go'
     });
