@@ -1,7 +1,3 @@
-// This script gets injected into any opened page
-// whose URL matches the pattern defined in the manifest
-// (see "content_script" key).
-
 console.log("MirthEx active on this page.")
 let buttonAutoDisabler;
 
@@ -12,19 +8,17 @@ const initiateOGSObserver = () => {
   const observer = new MutationObserver(mutations => {
     if (knownHref !== document.location.href) {
       knownHref = document.location.href;
-      console.log('page change detected!');
 
       // discipline blockers
       if (window.location.href == "https://online-go.com/play") {
         console.log('On Play page.');
-
         runDisciplineBlocker();
-      } else if (window.location.href.startsWith('https://online-go.com/game/')) {
+
+      } else if (window.location.href.startsWith('https://online-go.com/game')) {
         // listen for game ending or change (hook into websocket?)
         // TODO
 
         chrome.storage.sync.get(['resign_effects'], function(items) {
-          console.log('Checking for resign effects setting', items);
           if (items.resign_effects) {
             // TODO do effects
           }
@@ -50,36 +44,63 @@ function runDisciplineBlocker() {
     console.log('Settings retrieved', items);
     if (items.blocker) {
       disablePlayButtons();
-      injectBlockerMessage(items.blocker);
     } else {
       enablePlayButtons();
-      removeBlockerMessage();
     }
+    injectShimariWidget(items.blocker);
   });
 }
 
-// message is either 'focus' or 'review'
-function injectBlockerMessage(message) {
-  // make new element
-  var newEle = document.createElement('p');
-  newEle.class = "shimari-message";
-  newEle.innerHTML = message == "focus" ? "Do a Pregame Focus." : "Review your last game first.";
+function injectShimariWidget(blockerMessage) {
+  // make main widget
+  var mainWidgetElement = document.createElement('div');
+  mainWidgetElement.className = "shimari-main-widget";
 
-  // add to page
+  // make message element
+  var messageElement = document.createElement('p');
+  messageElement.className = "shimari-message";
+  if (blockerMessage) {
+    messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games\" class=\"shimari-link\">Review</a> your last game.";
+  } else {
+    messageElement.innerHTML = "Have a good game."
+  }
+
+  // lower flex area
+  var flexElement = document.createElement('div');
+  flexElement.className = "shimari-flex";
+
+  var refreshButton = document.createElement('button');
+  refreshButton.className = "shimari-refresh-button";
+  refreshButton.innerHTML = "refresh";
+
+  var shimariLogoLink = document.createElement('a');
+  shimariLogoLink.href = "https://mirthturtle.com/go/pregame";
+
+  var shimariLogoImage = document.createElement('img');
+  shimariLogoImage.className = "shimari-widget-logo";
+  shimariLogoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+
+  shimariLogoLink.appendChild(shimariLogoImage);
+
+  flexElement.appendChild( shimariLogoLink );
+  // flexElement.appendChild( refreshButton );
+
+  // add all to main widget
+  mainWidgetElement.appendChild( flexElement );
+  mainWidgetElement.appendChild( messageElement );
+
+  // add widget to page
   destinationElement = document.getElementsByClassName('custom-game-row')[0];
-  destinationElement.parentNode.insertBefore(newEle, destinationElement.nextSibling);
-}
-
-function removeBlockerMessage() {
-  const elements = document.getElementsByClassName('shimari-message');
-  elements[0].parentNode.removeChild(elements[0]);
+  destinationElement.appendChild(mainWidgetElement);
 }
 
 function disablePlayButtons() {
   buttonAutoDisabler = setInterval(function() {
     let buttons = document.getElementsByTagName("button");
     for (const button of buttons) {
-      button.disabled = true;
+      if (!button.class != 'shimari-refresh-button') {
+        button.disabled = true;
+      }
     }
   }, 500);
 }

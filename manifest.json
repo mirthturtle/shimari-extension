@@ -24,6 +24,7 @@
     },
     "content_scripts": [{
         "js": ["foreground.js"],
+        "css": ["widget.css"],
         "matches": ["https://online-go.com/*", "https://mirthturtle.com/*", "https://www.mirthturtle.com/*"]
     }]
 }
