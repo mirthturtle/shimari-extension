@@ -1,9 +1,9 @@
 console.log("MirthEx active on this page.")
 let buttonAutoDisabler;
+let gameStateObserver;
 
 const initiateOGSObserver = () => {
   let knownHref = document.location.href;
-  let gameStateObserver;
 
   const body = document.querySelector("body");
 
@@ -56,6 +56,12 @@ function setUpGameObserver() {
   let knownGame;
   let knownGameState;
   let newState;
+  let usernameB;
+  let usernameW;
+
+  if (gameStateObserver) {
+    gameStateObserver.disconnect();
+  }
 
   window.setTimeout(() => {
     let stateDiv = document.getElementsByClassName("play-controls")[0];
@@ -66,44 +72,52 @@ function setUpGameObserver() {
       if (knownGame === gameId) {
         // we've been on this game for a bit.
         newState = findGameStatusOnPage();
+        console.log('newstate', newState);
 
         // check for a change in state
         if (knownGameState !== newState) {
           if (newState === "B") {
-            console.log('pop B win');
-            // TODO get B username
-
-
-            chrome.storage.sync.get(['resign_effects'], function(items) {
+            console.log('B wins!');
+            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
               if (items.resign_effects) {
-                popStoneEffectWithUsername("B", username);
+                popStoneEffectWithUsername("B", usernameB);
               }
             });
-            doAutosync();
+            // TODO send OGS integration names back with status
+            // if ([usernameB, usernameW].includes?( items.username )) {
+              doAutosync();
+            // }
 
           } else if (newState === "W") {
-            console.log('pop W win');
-            // TODO get W username
+            console.log('W wins!');
 
-            chrome.storage.sync.get(['resign_effects'], function(items) {
+            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
               if (items.resign_effects) {
-                popStoneEffectWithUsername("W", username);
+                popStoneEffectWithUsername("W", usernameW);
               }
             });
-            doAutosync();
-
+            // if ([usernameB, usernameW].includes?( items.username )) {
+              doAutosync();
+            // }
           }
         }
       } else {
+        // newly arrived at game; lock in game info
         knownGame = gameId;
         newState = findGameStatusOnPage();
         knownGameState = newState;
+        usernameB = getUsernameFor("B");
+        usernameW = getUsernameFor("W");
       }
     });
 
     gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
     console.log('Game status observer activated.');
-  }, 1000);
+  }, 500);
+}
+
+function getUsernameFor(color) {
+  return document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0].getElementsByClassName('Player-username')[0].innerHTML;
 }
 
 function runDisciplineBlocker() {
@@ -240,22 +254,32 @@ function getRandomInt(min, max) {
 }
 
 function accoladeForUser(username) {
-  // TODO create span
-  // add to page
-  // use css animations
+  const gobanElement = document.getElementsByClassName('goban-container')[0];
+  const accoladeElement = document.createElement('span');
+
+  accoladeElement.className = "accolade-text";
+  accoladeElement.innerHTML = `${username} wins`;
+  gobanElement.appendChild(accoladeElement);
 }
 
 function doAutosync() {
-  // TODO call service worker
+  console.log('Autosync request to service worker');
 
+  chrome.runtime.sendMessage(
+    { action: 'requestServerSync'},
+    response => {
+      console.log('Sync completed.');
+    }
+  );
 }
 
 function popStoneEffectWithUsername(color, username) {
   const numStones = 100;
+  const usernameStoneDelay = 10;  // pop the username announcement a little ways in
+
   for (let i = 0; i < numStones; i++) {
     stonesArray.push(createMovingStone(color));
-    if (i === 10) {
-      // pop the username announcement a little ways into the storm
+    if (i === usernameStoneDelay) {
       accoladeForUser(username);
     }
   }
@@ -271,8 +295,8 @@ const frameRate = 1 / 60;
 
 function createMovingStone(color) {
   const vx = getRandomArbitrary(-12, 12); // x velocity
-  const vy = getRandomArbitrary(-12, 2);  // y velocity
-  const wrapperElement = document.querySelector('board-canvas');
+  const vy = getRandomArbitrary(-12, 12);  // y velocity
+  const wrapperElement = document.getElementsByClassName('goban-container')[0];
 
   const outerStone = document.createElement("div");
   outerStone.className = `moving-stone stone-${getRandomInt(1, 4)}`;

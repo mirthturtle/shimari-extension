@@ -1,11 +1,10 @@
 const host = "localhost:3000"   // "mirthturtle.com"
-const url = `http://${host}/extension_status`;
+const url = `http://${host}/go/learners/extension`;
 
-// on popup click, get cookies & send request for info to backend
-chrome.cookies.getAll({ domain: host }, function (cookies) {
+// on popup click, send request for info to backend
   chrome.runtime.sendMessage(
     // calls the service worker
-    { action: "getShimariStatus", cookies },
+    { action: "getShimariStatus" },
     response => {
       console.log('response', response);
 
@@ -31,7 +30,6 @@ chrome.cookies.getAll({ domain: host }, function (cookies) {
       }
     }
   );
-});
 
 // Attach links to site
 let element;

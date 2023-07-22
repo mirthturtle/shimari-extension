@@ -107,3 +107,51 @@
   color: #ebd37e;
 }
 
+.accolade-text {
+  z-index: 99999;
+  --scale-x: 0;
+  --scale-y: 0;
+  pointer-events: none;
+  display: block;
+  position: absolute;
+  bottom: calc(50%) - 1rem;
+  left: calc(50%) - 2rem;
+  -webkit-animation: accoladescale 2s ease-in forwards;
+     -moz-animation: accoladescale 2s ease-in forwards;
+          animation: accoladescale 2s ease-in forwards;
+  color: #ffd697;
+  font-size: 3em;
+}
+
+@-moz-keyframes accoladescale {
+  0% {
+    -moz-transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    -moz-transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes accoladescale {
+  0% {
+    -webkit-transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+
+@keyframes accoladescale {
+  0% {
+    transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
