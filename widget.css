@@ -3,7 +3,7 @@
   border: 1px black solid;
   background-color: #0a0a0a;
   padding: 8px 16px;
-  width: 200px;
+  width: 190px;
 /*  box-shadow: inset 0 0 3px 3px rgba(0,0,0,0.5);*/
           animation: fadeIn 1s;
   -webkit-animation: fadeIn 1s;
@@ -73,3 +73,37 @@
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+/* STONE FLYING */
+
+.stone-pop-box {
+  display: inline;
+  -webkit-filter: none;
+  filter: none;
+  position: relative;
+}
+
+.stone-1 {
+  font-size: 2vmin;
+}
+
+.stone-2 {
+  font-size: 3vmin;
+}
+
+.stone-3 {
+  font-size: 4vmin;
+}
+
+.stone-4 {
+  font-size: 5vmin;
+}
+
+.stone-5 {
+  font-size: 6vmin;
+}
+
+.stone-color {
+  color: #ebd37e;
+}
+

@@ -5,12 +5,12 @@ A Chrome Extension for your Go training. Integrates with [Shimari](https://mirth
 
 ## Installation
 
-Open your [Chrome Extensions](chrome://extensions/) panel and turn on Developer Mode. Click "Load Unpacked" and select the `mirthex` folder.
+Clone this repo. Open your [Chrome Extensions](chrome://extensions/) panel and turn on Developer Mode. Click "Load Unpacked" and select the `mirthex` folder.
 
 
 ### Features
 
-- Resign effects: More visually stunning Resigns on OGS
+- Gameover effects: More visually stunning Gameovers on OGS. Great for streamers!
 - Discipline helpers: Not allowed to start new OGS games unless you've
   - recently reviewed a game
   - recently completed the Pregame Focus.
