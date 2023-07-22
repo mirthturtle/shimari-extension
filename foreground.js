@@ -3,9 +3,11 @@ let buttonAutoDisabler;
 
 const initiateOGSObserver = () => {
   let knownHref = document.location.href;
+  let gameStateObserver;
+
   const body = document.querySelector("body");
 
-  const observer = new MutationObserver(mutations => {
+  const hrefObserver = new MutationObserver(mutations => {
     if (knownHref !== document.location.href) {
       knownHref = document.location.href;
 
@@ -15,25 +17,97 @@ const initiateOGSObserver = () => {
         runDisciplineBlocker();
 
       } else if (window.location.href.startsWith('https://online-go.com/game')) {
-        // listen for game ending or change (hook into websocket?)
-        // TODO
-
-        chrome.storage.sync.get(['resign_effects'], function(items) {
-          if (items.resign_effects) {
-            // TODO do effects
-          }
-        });
+        console.log('On Game page.');
+        setUpGameObserver();
       }
     }
   });
-  observer.observe(body, { childList: true, subtree: true });
+  hrefObserver.observe(body, { childList: true, subtree: true });
   console.log('OGS observer activated.');
 
   // make initial observation
   if (window.location.href.startsWith("https://online-go.com/play")) {
     refreshForWidget();
+  } else if (window.location.href.startsWith("https://online-go.com/game")) {
+    setUpGameObserver();
   }
 };
+
+function findGameStatusOnPage() {
+  let rawStatusString;
+  let gameStateDiv = document.getElementsByClassName("game-state")[0];
+  if (gameStateDiv) {
+    rawStatusString = gameStateDiv.children[0].innerHTML;
+    console.log(rawStatusString);
+    if (rawStatusString.includes("White wins")) {
+      return "W";
+    } else if (rawStatusString.includes("Black wins")) {
+      return "B";
+    } else if (rawStatusString.includes("to move")) {
+      return "?";
+    }
+
+  } else {
+    return false;
+  }
+}
+
+function setUpGameObserver() {
+  let knownGame;
+  let knownGameState;
+  let newState;
+
+  window.setTimeout(() => {
+    let stateDiv = document.getElementsByClassName("play-controls")[0];
+    console.log('statediv', stateDiv);
+
+    gameStateObserver = new MutationObserver(mutations => {
+      console.log('mutations', mutations);
+      let gameId = window.location.href.split("https://online-go.com/game/")[1];
+
+      if (knownGame === gameId) {
+        // we've been on this game for a bit.
+        newState = findGameStatusOnPage();
+
+        // check for a change in state
+        if (knownGameState !== newState) {
+          if (newState === "B") {
+            console.log('pop B win');
+
+            chrome.storage.sync.get(['resign_effects'], function(items) {
+              if (items.resign_effects) {
+                // TODO do effects
+              }
+            });
+            // TODO autosync
+
+          } else if (newState === "W") {
+            console.log('pop W win');
+
+            chrome.storage.sync.get(['resign_effects'], function(items) {
+              if (items.resign_effects) {
+                // TODO do effects
+              }
+            });
+            // TODO autosync
+
+          }
+        }
+      } else {
+        console.log('newly arrived on game. lock in game id');
+        knownGame = gameId;
+
+        newState = findGameStatusOnPage();
+        console.log('game status', newState);
+
+        knownGameState = newState;
+      }
+    });
+
+    gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
+    console.log('Game status observer activated.');
+  }, 1000);
+}
 
 function runDisciplineBlocker() {
   // check localstorage for blockers
@@ -49,7 +123,7 @@ function runDisciplineBlocker() {
   });
 }
 
-  // call service worker to trigger popup & get fresh data in chrome storage
+// call service worker to trigger popup & get fresh data in chrome storage
 function refreshForWidget() {
   chrome.runtime.sendMessage(
     { action: 'refreshForWidget'},
