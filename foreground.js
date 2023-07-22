@@ -38,7 +38,7 @@ function findGameStatusOnPage() {
   let gameStateDiv = document.getElementsByClassName("game-state")[0];
   if (gameStateDiv) {
     rawStatusString = gameStateDiv.children[0].innerHTML;
-    console.log(rawStatusString);
+
     if (rawStatusString.includes("White wins")) {
       return "W";
     } else if (rawStatusString.includes("Black wins")) {
@@ -59,10 +59,8 @@ function setUpGameObserver() {
 
   window.setTimeout(() => {
     let stateDiv = document.getElementsByClassName("play-controls")[0];
-    console.log('statediv', stateDiv);
 
     gameStateObserver = new MutationObserver(mutations => {
-      console.log('mutations', mutations);
       let gameId = window.location.href.split("https://online-go.com/game/")[1];
 
       if (knownGame === gameId) {
@@ -94,12 +92,8 @@ function setUpGameObserver() {
           }
         }
       } else {
-        console.log('newly arrived on game. lock in game id');
         knownGame = gameId;
-
         newState = findGameStatusOnPage();
-        console.log('game status', newState);
-
         knownGameState = newState;
       }
     });
@@ -123,14 +117,11 @@ function runDisciplineBlocker() {
   });
 }
 
-// call service worker to trigger popup & get fresh data in chrome storage
+// get fresh data in chrome storage and redraw the widget
 function refreshForWidget() {
   chrome.runtime.sendMessage(
     { action: 'refreshForWidget'},
     response => {
-      console.log('response from refresh', response);
-
-      // redraw the widget
       runDisciplineBlocker();
     }
   );
