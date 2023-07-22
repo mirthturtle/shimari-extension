@@ -73,6 +73,7 @@ function setUpGameObserver() {
             console.log('pop B win');
             // TODO get B username
 
+
             chrome.storage.sync.get(['resign_effects'], function(items) {
               if (items.resign_effects) {
                 popStoneEffectWithUsername("B", username);
@@ -108,8 +109,8 @@ function setUpGameObserver() {
 function runDisciplineBlocker() {
   // check localstorage for blockers
   chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
-    console.log('Discipline blocker:', items);
-    if (items.blocker) {
+    console.log('Discipline blocker says:', items);
+    if (items.logged_in && items.blocker) {
       disablePlayButtons();
     } else {
       enablePlayButtons();
@@ -159,7 +160,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   flameImage.src = "https://www.mirthturtle.com/shimari-flame.png";
   flameLink.appendChild(flameImage)
 
-  // refresh image/link # TODO refrech
+  // refresh image/link
   var refreshLink = document.createElement('a');
   refreshLink.href = "#";
   refreshLink.onclick = refreshForWidget;
@@ -245,7 +246,7 @@ function accoladeForUser(username) {
 }
 
 function doAutosync() {
-  // TODO
+  // TODO call service worker
 
 }
 

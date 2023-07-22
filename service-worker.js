@@ -1,7 +1,7 @@
 // This is the service worker script, which executes in its own context
 // when the extension is installed or refreshed (or when you access its console).
 
-console.log("service worker (background script)")
+console.log("Service worker (background script)")
 
 const prod = false;
 const host = prod ? "mirthturtle.com" : "localhost:3000";
