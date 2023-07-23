@@ -11,9 +11,8 @@ const url = `http://${host}/go/learners/extension`;
       if (response.logged_in) {
         console.log("Logged in on the popup");
 
-        document.getElementById('log-text').innerHTML = `Hi, ${response.username}.`;
+        document.getElementById('log-text').innerHTML = `Welcome, ${response.username}.`;
         document.getElementById('log-text').style.display = 'inline-block';
-        document.getElementById('notlog-text').style.display = 'none';
 
         // set the settings statuses
         document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';

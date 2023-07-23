@@ -79,7 +79,7 @@ function setUpGameObserver() {
           if (newState === "B") {
             console.log('B wins!');
             chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
-              if (items.resign_effects) {
+              if (items.resign_effects && usernameB) {
                 popStoneEffectWithUsername("B", usernameB);
               }
             });
@@ -93,13 +93,14 @@ function setUpGameObserver() {
             console.log('W wins!');
 
             chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
-              if (items.resign_effects) {
+              if (items.resign_effects && usernameW) {
                 popStoneEffectWithUsername("W", usernameW);
               }
             });
 
             // autosync if our game
-            if (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW)) {
+            if (usernameB && usernameW &&
+              (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW))) {
               doAutosync();
             }
           }
