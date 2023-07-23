@@ -85,7 +85,7 @@ function setUpGameObserver() {
             });
 
             // autosync if our game
-            if (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW)) {
+            if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
               doAutosync();
             }
 
@@ -100,7 +100,7 @@ function setUpGameObserver() {
 
             // autosync if our game
             if (usernameB && usernameW &&
-              (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW))) {
+              (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
               doAutosync();
             }
           }
