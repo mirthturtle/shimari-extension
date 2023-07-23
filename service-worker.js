@@ -35,7 +35,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
 
   } else if (message.action === "requestServerSync") {
-    requestSyncFromBackend(sendResponse);
+    window.setTimeout(() => {
+      requestSyncFromBackend(sendResponse);
+    }, 500);
+
     return true; // Indicates that the response will be sent asynchronously
   }
 });
