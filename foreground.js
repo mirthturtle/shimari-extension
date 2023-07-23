@@ -78,15 +78,16 @@ function setUpGameObserver() {
         if (knownGameState !== newState) {
           if (newState === "B") {
             console.log('B wins!');
-            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
+            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
               if (items.resign_effects) {
                 popStoneEffectWithUsername("B", usernameB);
               }
             });
-            // TODO send OGS integration names back with status
-            // if ([usernameB, usernameW].includes?( items.username )) {
+
+            // autosync if our game
+            if (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW)) {
               doAutosync();
-            // }
+            }
 
           } else if (newState === "W") {
             console.log('W wins!');
@@ -96,9 +97,11 @@ function setUpGameObserver() {
                 popStoneEffectWithUsername("W", usernameW);
               }
             });
-            // if ([usernameB, usernameW].includes?( items.username )) {
+
+            // autosync if our game
+            if (items.integrations.includes?(usernameB) || items.integrations.includes?(usernameW)) {
               doAutosync();
-            // }
+            }
           }
         }
       } else {

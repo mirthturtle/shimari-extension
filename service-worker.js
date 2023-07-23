@@ -73,6 +73,7 @@ function requestSyncFromBackend(sendResponse) {
     .then((response) => response.json())
     .then((json) => {
       console.log('Sync response', json);
+      sendResponse(json);
     });
   });
 }
