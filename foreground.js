@@ -40,18 +40,20 @@ const initiateOGSObserver = () => {
 
 function runDisciplineBlocker() {
   // check localstorage for blockers
-  if (chrome.storage) {
-    chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
-      console.log('Discipline blocker says:', items);
-      if (items.logged_in && items.blocker) {
-        disablePlayButtons();
-      } else {
-        enablePlayButtons();
-      }
-      removeExistingShimariWidgets();
-      injectShimariWidget(items.logged_in, items.blocker);
-    });
-  }
+  window.setTimeout(() => {
+    if (chrome.storage) {
+      chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
+        console.log('Discipline blocker says:', items);
+        if (items.logged_in && items.blocker) {
+          disablePlayButtons();
+        } else {
+          enablePlayButtons();
+        }
+        removeExistingShimariWidgets();
+        injectShimariWidget(items.logged_in, items.blocker);
+      });
+    }
+  }, 250);
 }
 
 function clearExistingAutoDisablers() {
