@@ -2,6 +2,8 @@ console.log("MirthEx active on this page.")
 let buttonAutoDisabler;
 let gameStateObserver;
 
+// PLAY PAGE / DISCIPLINE BLOCKER
+
 const initiateOGSObserver = () => {
   let knownHref = document.location.href;
 
@@ -36,96 +38,6 @@ const initiateOGSObserver = () => {
   }
 };
 
-function findGameStatusOnPage() {
-  let rawStatusString;
-  let gameStateDiv = document.getElementsByClassName("game-state")[0];
-  if (gameStateDiv) {
-    rawStatusString = gameStateDiv.children[0].innerHTML;
-
-    if (rawStatusString.includes("White wins")) {
-      return "W";
-    } else if (rawStatusString.includes("Black wins")) {
-      return "B";
-    } else if (rawStatusString.includes("to move")) {
-      return "?";
-    }
-
-  } else {
-    return false;
-  }
-}
-
-function setUpGameObserver() {
-  let knownGame;
-  let knownGameState;
-  let newState;
-  let usernameB;
-  let usernameW;
-
-  if (gameStateObserver) {
-    gameStateObserver.disconnect();
-  }
-
-  window.setTimeout(() => {
-    let stateDiv = document.getElementsByClassName("play-controls")[0];
-
-    gameStateObserver = new MutationObserver(mutations => {
-      let gameId = window.location.href.split("https://online-go.com/game/")[1];
-
-      if (knownGame === gameId) {
-        // we've been on this game for a bit.
-        newState = findGameStatusOnPage();
-        console.log('newstate', newState);
-
-        // check for a change in state
-        if (knownGameState !== newState) {
-          if (newState === "B") {
-            console.log('B wins!');
-
-            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
-              if (items.resign_effects && usernameB) {
-                popStoneEffectWithUsername("B", usernameB);
-              }
-              // autosync if our game
-              if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
-                doAutosync();
-              }
-            });
-
-          } else if (newState === "W") {
-            console.log('W wins!');
-
-            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
-              if (items.resign_effects && usernameW) {
-                popStoneEffectWithUsername("W", usernameW);
-              }
-              // autosync if our game
-              if (usernameB && usernameW &&
-                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-                doAutosync();
-              }
-            });
-          }
-        }
-      } else {
-        // newly arrived at game; lock in game info
-        knownGame = gameId;
-        newState = findGameStatusOnPage();
-        knownGameState = newState;
-        usernameB = getUsernameFor("B");
-        usernameW = getUsernameFor("W");
-      }
-    });
-
-    gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
-    console.log('Game status observer activated.');
-  }, 500);
-}
-
-function getUsernameFor(color) {
-  return document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0].getElementsByClassName('Player-username')[0].innerHTML;
-}
-
 function runDisciplineBlocker() {
   // check localstorage for blockers
   if (chrome.storage) {
@@ -158,16 +70,7 @@ function refreshForWidget() {
   );
 }
 
-function createAnimationOverlay() {
-  const gobanElement = document.querySelectorAll('.Goban')[1];
-
-  var overlay = document.createElement('div');
-  overlay.className = "shimari-animation-overlay";
-  gobanElement.appendChild(overlay);
-}
-
 function injectShimariWidget(loggedIn, blockerMessage) {
-  // main widget
   var mainWidgetElement = document.createElement('div');
   mainWidgetElement.className = "shimari-main-widget";
 
@@ -250,16 +153,117 @@ function disablePlayButtons() {
 }
 
 function enablePlayButtons() {
-  if (buttonAutoDisabler) {
-    clearInterval(buttonAutoDisabler);
-  }
+  clearExistingAutoDisablers();
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
     button.disabled = false;
   }
 }
 
-// STONE POPPER
+// GAME PAGE LOGIC
+
+function setUpGameObserver() {
+  let knownGame;
+  let knownGameState;
+  let newState;
+  let usernameB;
+  let usernameW;
+
+  if (gameStateObserver) {
+    gameStateObserver.disconnect();
+  }
+
+  window.setTimeout(() => {
+    let stateDiv = document.getElementsByClassName("play-controls")[0];
+
+    gameStateObserver = new MutationObserver(mutations => {
+      let gameId = window.location.href.split("https://online-go.com/game/")[1];
+
+      if (knownGame === gameId) {
+        // we've been on this game for a bit.
+        newState = findGameStatusOnPage();
+        // console.log('newstate', newState);
+
+        // check for a change in state
+        if (knownGameState !== newState) {
+          if (newState === "B") {
+            console.log('B wins!');
+
+            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
+              if (items.resign_effects && usernameB) {
+                popStoneEffectWithUsername("B", usernameB);
+              }
+              // autosync if our game
+              if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
+                doAutosync();
+              }
+            });
+
+          } else if (newState === "W") {
+            console.log('W wins!');
+
+            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
+              if (items.resign_effects && usernameW) {
+                popStoneEffectWithUsername("W", usernameW);
+              }
+              // autosync if our game
+              if (usernameB && usernameW &&
+                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+                doAutosync();
+              }
+            });
+          }
+        }
+      } else {
+        // newly arrived at game; lock in game info
+        knownGame = gameId;
+        newState = findGameStatusOnPage();
+        knownGameState = newState;
+        usernameB = getUsernameFor("B");
+        usernameW = getUsernameFor("W");
+      }
+    });
+
+    gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
+    console.log('Game status observer activated.');
+  }, 500);
+}
+
+function getUsernameFor(color) {
+  return document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0].getElementsByClassName('Player-username')[0].innerHTML;
+}
+
+function findGameStatusOnPage() {
+  let rawStatusString;
+  let gameStateDiv = document.getElementsByClassName("game-state")[0];
+  if (gameStateDiv) {
+    rawStatusString = gameStateDiv.children[0].innerHTML;
+
+    if (rawStatusString.includes("White wins")) {
+      return "W";
+    } else if (rawStatusString.includes("Black wins")) {
+      return "B";
+    } else if (rawStatusString.includes("to move")) {
+      return "?";
+    }
+
+  } else {
+    return false;
+  }
+}
+
+function doAutosync() {
+  console.log('Autosync request to service worker');
+
+  chrome.runtime.sendMessage(
+    { action: 'requestServerSync'},
+    response => {
+      console.log('Sync completed.');
+    }
+  );
+}
+
+// GAMEOVER EFFECTS
 
 const stonesArray = [];
 let stoneboxWidth = window.innerWidth;
@@ -273,6 +277,14 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function createAnimationOverlay() {
+  const gobanElement = document.querySelectorAll('.Goban')[1];
+
+  var overlay = document.createElement('div');
+  overlay.className = "shimari-animation-overlay";
+  gobanElement.appendChild(overlay);
+}
+
 function popAccolade(color, username) {
   const gobanElement = document.querySelector('.shimari-animation-overlay');
   const accoladeElement = document.createElement('span');
@@ -280,17 +292,6 @@ function popAccolade(color, username) {
   accoladeElement.className = `accolade-text ${color.toLowerCase()}-accolade`;
   accoladeElement.innerHTML = `${username} wins`;
   gobanElement.appendChild(accoladeElement);
-}
-
-function doAutosync() {
-  console.log('Autosync request to service worker');
-
-  chrome.runtime.sendMessage(
-    { action: 'requestServerSync'},
-    response => {
-      console.log('Sync completed.');
-    }
-  );
 }
 
 function popStoneEffectWithUsername(color, username) {
@@ -435,5 +436,52 @@ function stoneAnimationLoop() {
 }
 
 stoneAnimationLoop();
+
+// SCROLL HELPER
+
+function detectMouseWheelDirection( e ) {
+  var delta = null,  direction = false;
+  if ( !e ) { // if the event is not provided, we get it from the window object
+    e = window.event;
+  }
+  if ( e.wheelDelta ) { // will work in most cases
+    delta = e.wheelDelta / 60;
+  } else if ( e.detail ) { // fallback for Firefox
+    delta = -e.detail / 2;
+  }
+  if ( delta !== null ) {
+    direction = delta > 0 ? 'up' : 'down';
+  }
+  return direction;
+}
+
+function handleMouseWheelDirection( direction ) {
+  const prevBtn = document.querySelectorAll('.move-control')[2];
+  const nextBtn = document.querySelectorAll('.move-control')[4];
+
+  if ( direction == 'down' ) {
+    var a = document.querySelector('.Goban:hover');
+    if (a) {
+      prevBtn.click();
+    }
+  } else if ( direction == 'up' ) {
+    var b = document.querySelector('.Goban:hover');
+    if (b) {
+      nextBtn.click();
+    }
+  }
+}
+
+document.onmousewheel = function( e ) {
+  handleMouseWheelDirection( detectMouseWheelDirection( e ) );
+};
+
+if ( window.addEventListener ) {
+  document.addEventListener( 'DOMMouseScroll', function( e ) {
+    handleMouseWheelDirection( detectMouseWheelDirection( e ) );
+  });
+}
+
+// ON PAGE LOAD
 
 window.onload = initiateOGSObserver;
