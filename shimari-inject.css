@@ -1,6 +1,7 @@
 /* DISCIPLINE BLOCKER WIDGET */
 
 .shimari-main-widget {
+  position: relative;
   border-radius: 10px;
   border: 1px black solid;
   background-color: #0a0a0a;
@@ -22,7 +23,14 @@
 .shimari-flex {
   display: flex;
   justify-content: space-around;
+  margin: 0 18px;
   align-items: center;
+}
+
+.shimari-refresh-link {
+  position: absolute;
+  right: 3px;
+  top: -2px;
 }
 
 .shimari-refresh-image {

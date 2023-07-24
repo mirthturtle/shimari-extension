@@ -5,10 +5,10 @@
     "description": "Companion to Shimari Go software.",
     "version": "0.0.1",
     "icons": {
-        "16": "img/tungsten16.png",
-        "32": "img/tungsten32.png",
-        "48": "img/tungsten48.png",
-        "128": "img/tungsten128.png"
+        "16": "img/flame16.png",
+        "32": "img/flame32.png",
+        "48": "img/flame48.png",
+        "128": "img/flame128.png"
     },
     "action": {
         "default_title": "Shimari Extension – Extended Discipline",

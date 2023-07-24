@@ -26,4 +26,4 @@ After installation, this extension will automatically provide OGS with the above
 
 ## Issues & Contributions
 
-If you find a bug or would like a new feature, please open an Issue or Pull Request. Thanks!
+To report a bug or request a new feature, please open an Issue or Pull Request. Thanks!

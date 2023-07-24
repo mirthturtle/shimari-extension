@@ -64,6 +64,11 @@ function clearExistingAutoDisablers() {
 
 // get fresh data in chrome storage and redraw the widget
 function refreshForWidget() {
+  let el = document.querySelector('.shimari-refresh-link');
+  if (el) {
+    el.remove();
+  }
+
   chrome.runtime.sendMessage(
     { action: 'refreshForWidget'},
     response => {
@@ -104,6 +109,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   // refresh image/link
   var refreshLink = document.createElement('a');
   refreshLink.href = "#";
+  refreshLink.className = "shimari-refresh-link";
   refreshLink.onclick = refreshForWidget;
   var refreshImage = document.createElement('img');
   refreshImage.className = "shimari-refresh-image";
@@ -120,10 +126,11 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   shimariLogoLink.appendChild(shimariLogoImage);
 
   // add items to flex row
-  flexElement.appendChild(shimariLogoLink);
   flexElement.appendChild(flameLink);
+  flexElement.appendChild(shimariLogoLink);
+
   if (blockerMessage) {
-    flexElement.appendChild(refreshLink);
+    mainWidgetElement.appendChild(refreshLink);
   }
 
   // add all to main widget
