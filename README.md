@@ -27,3 +27,8 @@ After installation, this extension will automatically provide OGS with the above
 ## Issues & Contributions
 
 To report a bug or request a new feature, please open an Issue or Pull Request. Thanks!
+
+
+## Support
+
+If you enjoy this extension, please consider a [Mirth Turtle Membership](https://mirthturtle.com/memberships) or burning some [Raccooncoin](https://mirthturtle.com/raccooncoin). If you use it on stream, a [shoutout](https://twitch.tv/mirthturtle) is always appreciated.
