@@ -1,4 +1,4 @@
-console.log("MirthEx active on this page.")
+console.log("Shimari Extension active on this page.")
 let buttonAutoDisabler;
 let gameStateObserver;
 

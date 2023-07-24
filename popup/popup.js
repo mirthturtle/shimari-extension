@@ -61,3 +61,13 @@ let element;
     }, false);
   }
 });
+
+['source-link'].forEach(ele => {
+  element = document.getElementById(ele);
+  if (element) {
+    element.addEventListener('click', function() {
+      chrome.runtime.sendMessage(
+        { action: "goToSourceCode" });
+    }, false);
+  }
+});

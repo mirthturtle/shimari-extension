@@ -3,7 +3,7 @@ body {
   color: #eee;
 
   width: 170px;
-  height: 240px;
+  height: 270px;
   text-align: center;
 }
 
@@ -19,6 +19,7 @@ hr {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
   margin: 10px auto;
 }
 
@@ -58,4 +59,13 @@ hr {
 .turtle-text {
   font-size: 0.7em;
   margin: 5px 0;
+  color: #696969;
+}
+
+.source-link {
+  font-size: 0.8em;
+  margin: 5px 0;
+  text-decoration: underline;
+  cursor: pointer;
+
 }

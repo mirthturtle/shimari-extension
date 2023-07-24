@@ -30,6 +30,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       url: 'https://mirthturtle.com/go/login'
     });
 
+  } else if ( message.action === "goToSourceCode" ) {
+    chrome.tabs.update(null, {
+      url: 'https://github.com/christiancodes/shimari-extension'
+    });
+
   } else if ( message.action === "refreshForWidget" ) {
     getStatusForExtension(sendResponse);
     return true;

@@ -1,18 +1,17 @@
 {
     // Comments are accepted in the manifest, even though it is JSON.
     "manifest_version": 3,
-    "name": "MirthEx – Extension of Mirth",
-    "description": "Companion to Mirth Turtle software.",
+    "name": "Shimari Extension – Extended Discipline",
+    "description": "Companion to Shimari Go software.",
     "version": "0.0.1",
     "icons": {
-        "16": "logo/tungsten16.png",
-        "32": "logo/tungsten32.png",
-        "48": "logo/tungsten48.png",
-        "128": "logo/tungsten128.png"
+        "16": "img/tungsten16.png",
+        "32": "img/tungsten32.png",
+        "48": "img/tungsten48.png",
+        "128": "img/tungsten128.png"
     },
-    "options_page": "settings/settings.html",
     "action": {
-        "default_title": "MirthEx – Extension of Mirth",
+        "default_title": "Shimari Extension – Extended Discipline",
         "default_popup": "popup/popup.html"
     },
     "permissions": ["cookies", "storage"],
@@ -24,7 +23,7 @@
     },
     "content_scripts": [{
         "js": ["foreground.js"],
-        "css": ["widget.css"],
+        "css": ["shimari-inject.css"],
         "matches": ["https://online-go.com/*", "https://mirthturtle.com/*", "https://www.mirthturtle.com/*"]
     }]
 }

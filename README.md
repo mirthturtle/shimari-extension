@@ -1,14 +1,15 @@
-# MirthEx – Mirth Turtle Extended
+![Shimari Extension](https://github.com/christiancodes/shimari-extension/blob/main/shimari-extension-border.png "Shimari Extension")
 
-A Chrome Extension to assist [Go](https://en.wikipedia.org/wiki/Go_(game)) training. Integrates with [Shimari](https://mirthturtle.com/go) and [OGS](https://online-go.com/).
+A Chrome Extension to make your [Go](https://en.wikipedia.org/wiki/Go_(game)) training more effective. Extends the [Shimari](https://mirthturtle.com/go) platform to modify your [OGS](https://online-go.com/) experience.
 
 
 ## Features
 
-- Gameover effects: More visually stunning ends-of-games on OGS. Great for streamers!
-- Discipline helpers: Not allowed to start a new game unless you've
+- Discipline helpers: Blocks you from starting a new game unless you've
   - reviewed your last game on [Shimari](https://mirthturtle.com/go)
   - recently done a [Pregame Focus](https://mirthturtle.com/go/pregame)
+- Gameover effects: More visually stunning wins and losses on OGS. Great for streamers!
+- Adds mousewheel scrolling on OGS games
 
 
 ## Usage
@@ -18,7 +19,7 @@ After installation, this extension will automatically provide OGS with the above
 
 ## Installation
 
-Clone this repo. Open your [Chrome Extensions](chrome://extensions/) panel and turn on Developer Mode. Click "Load Unpacked" and select the `mirthex` folder.
+Clone this repo. Open your [Chrome Extensions](chrome://extensions/) panel and turn on Developer Mode. Click "Load Unpacked" and select the `shimari-extension` folder.
 
 
 ## Issues & Contributions
