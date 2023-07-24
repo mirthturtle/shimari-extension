@@ -78,16 +78,16 @@ function setUpGameObserver() {
         if (knownGameState !== newState) {
           if (newState === "B") {
             console.log('B wins!');
+
             chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
               if (items.resign_effects && usernameB) {
                 popStoneEffectWithUsername("B", usernameB);
               }
+              // autosync if our game
+              if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
+                doAutosync();
+              }
             });
-
-            // autosync if our game
-            if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
-              doAutosync();
-            }
 
           } else if (newState === "W") {
             console.log('W wins!');
@@ -96,13 +96,12 @@ function setUpGameObserver() {
               if (items.resign_effects && usernameW) {
                 popStoneEffectWithUsername("W", usernameW);
               }
+              // autosync if our game
+              if (usernameB && usernameW &&
+                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+                doAutosync();
+              }
             });
-
-            // autosync if our game
-            if (usernameB && usernameW &&
-              (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-              doAutosync();
-            }
           }
         }
       } else {
@@ -146,6 +145,14 @@ function refreshForWidget() {
       runDisciplineBlocker();
     }
   );
+}
+
+function createAnimationOverlay() {
+  const gobanElement = document.querySelectorAll('.Goban')[1];
+
+  var overlay = document.createElement('div');
+  overlay.className = "shimari-animation-overlay";
+  gobanElement.appendChild(overlay);
 }
 
 function injectShimariWidget(loggedIn, blockerMessage) {
@@ -257,11 +264,11 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function accoladeForUser(username) {
-  const gobanElement = document.getElementsByClassName('goban-container')[0];
+function popAccolade(color, username) {
+  const gobanElement = document.querySelector('.shimari-animation-overlay');
   const accoladeElement = document.createElement('span');
 
-  accoladeElement.className = "accolade-text";
+  accoladeElement.className = `accolade-text ${color.toLowerCase()}-accolade`;
   accoladeElement.innerHTML = `${username} wins`;
   gobanElement.appendChild(accoladeElement);
 }
@@ -278,15 +285,13 @@ function doAutosync() {
 }
 
 function popStoneEffectWithUsername(color, username) {
-  const numStones = 100;
-  const usernameStoneDelay = 10;  // pop the username announcement a little ways in
+  createAnimationOverlay();
+  const numStones = 150;
 
   for (let i = 0; i < numStones; i++) {
     stonesArray.push(createMovingStone(color));
-    if (i === usernameStoneDelay) {
-      accoladeForUser(username);
-    }
   }
+  popAccolade(color, username);
 }
 
 const radius = 15;
@@ -298,17 +303,17 @@ const ag = 0; // m / s^2
 const frameRate = 1 / 60;
 
 function createMovingStone(color) {
-  const vx = getRandomArbitrary(-12, 12); // x velocity
-  const vy = getRandomArbitrary(-12, 12);  // y velocity
-  const wrapperElement = document.getElementsByClassName('goban-container')[0];
+  const vx = getRandomArbitrary(-6, 6); // x velocity
+  const vy = getRandomArbitrary(-6, 6);  // y velocity
+  const wrapperElement = document.querySelector('.shimari-animation-overlay');
 
   const outerStone = document.createElement("div");
-  outerStone.className = `moving-stone stone-${getRandomInt(1, 4)}`;
-  var emojiset = [(color === "B") ? '⚫' : '⚪'];
+  outerStone.className = `moving-stone stone-${getRandomInt(3, 5)}`;
+  var emoji = (color === "B") ? '⚫' : '⚪';
 
   const innerStone = document.createElement("span");
   innerStone.className = "inner";
-  innerStone.innerText = emojiset[getRandomInt(0, emojiset.length - 1)];
+  innerStone.innerText = emoji;
 
   outerStone.appendChild(innerStone);
   wrapperElement.appendChild(outerStone);
@@ -322,7 +327,7 @@ function createMovingStone(color) {
     absolutePosition: { x: rect.left, y: rect.bottom },
     position: { x: rect.left, y: rect.bottom },
     velocity: { x: vx, y: vy },
-    mass: 10, //kg
+    mass: 40, //kg
     radius: outerStone.offsetWidth, // 1px = 1cm
     restitution: -.7,
     lifetime,

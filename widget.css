@@ -1,10 +1,11 @@
+/* INJECTED WIDGET */
+
 .shimari-main-widget {
   border-radius: 10px;
   border: 1px black solid;
   background-color: #0a0a0a;
   padding: 8px 16px;
   width: 190px;
-/*  box-shadow: inset 0 0 3px 3px rgba(0,0,0,0.5);*/
           animation: fadeIn 1s;
   -webkit-animation: fadeIn 1s;
      -moz-animation: fadeIn 1s;
@@ -46,11 +47,6 @@
   width: 25px;
   height: 47px;
   cursor: pointer;
-
-/*better crop first & better glow too */
-/*  -webkit-box-shadow: 0px 0px 32px -10px rgba(244, 58, 58, 1);
-     -moz-box-shadow: 0px 0px 32px -10px rgba(244, 58, 58, 1);
-          box-shadow: 0px 0px 32px -10px rgba(244, 58, 58, 1);*/
 }
 
 @keyframes fadeIn {
@@ -76,19 +72,77 @@
 
 /* STONE FLYING */
 
-.stone-pop-box {
-  display: inline;
-  -webkit-filter: none;
-  filter: none;
-  position: relative;
-}
+.moving-stone {
+  z-index: 999;
+  --scale-x: 0;
+  --scale-y: 0;
+  pointer-events: none;
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 1rem);
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-transform:
+    translate(
+      calc( var(--x) * 1px ),
+      calc( var(--y) * 1px )
+    )
+    translate(-50%, -50%);
+  transform:
+    translate(
+      calc( var(--x) * 1px ),
+      calc( var(--y) * 1px )
+    )
+    translate(-50%, -50%);
 
-.stone-1 {
-  font-size: 2vmin;
-}
+  pointer-events: none;
+  -webkit-animation:
+    stone-enter 0.05s ease-in backwards,
+    stone-exit 500ms linear calc( (var(--lifetime, 3000) * 1ms) - 300ms) forwards;
+  animation:
+    stone-enter 0.05s ease-in backwards,
+    stone-exit 500ms linear calc( (var(--lifetime, 3000) * 1ms) - 300ms) forwards;
 
-.stone-2 {
-  font-size: 3vmin;
+
+  @keyframes stone-enter {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes stone-exit {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .inner {
+    -webkit-animation: inner-rotate 1.3s linear infinite;
+    animation: inner-rotate 1.3s linear infinite;
+    -webkit-transform: rotate(
+      calc(-1turn * var(--direction) )
+    );
+    transform: rotate(
+      calc(-1turn * var(--direction) )
+    );
+
+    @-webkit-keyframes inner-rotate {
+      to {
+        transform: none;
+      }
+    }
+    @keyframes inner-rotate {
+      to {
+        transform: none;
+      }
+    }
+    -webkit-filter: none;
+    filter: none;
+  }
 }
 
 .stone-3 {
@@ -103,55 +157,96 @@
   font-size: 6vmin;
 }
 
-.stone-color {
-  color: #ebd37e;
+.shimari-animation-overlay {
+  display: block;
+  -webkit-filter: none;
+  filter: none;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 99999;
 }
 
+/* Congrats to winner */
+
 .accolade-text {
+  font-family: Nunito, sans-serif;
   z-index: 99999;
-  --scale-x: 0;
-  --scale-y: 0;
   pointer-events: none;
   display: block;
   position: absolute;
-  bottom: calc(50%) - 1rem;
-  left: calc(50%) - 2rem;
-  -webkit-animation: accoladescale 2s ease-in forwards;
-     -moz-animation: accoladescale 2s ease-in forwards;
-          animation: accoladescale 2s ease-in forwards;
-  color: #ffd697;
-  font-size: 3em;
+  bottom: calc(50%);
+  left: calc(35%);
+  -webkit-animation: accoladescale 4s ease-in forwards;
+     -moz-animation: accoladescale 4s ease-in forwards;
+          animation: accoladescale 4s ease-in forwards;
+  background: rgba(0,0,0,0);
+}
+
+.b-accolade {
+  text-shadow: #fff 1px 1px 20px;
+  color: black;
+}
+
+.w-accolade {
+  text-shadow: #000 1px 0 10px;
+  color: white;
 }
 
 @-moz-keyframes accoladescale {
   0% {
-    -moz-transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
-    opacity: 1;
+    -moz-transform: scale(0);
+    opacity: 75;
+  }
+  25% {
+    -moz-transform: scale(3);
+    opacity: 100;
+  }
+  35% {
+    -moz-transform: scale(3);
+    opacity: 100;
   }
   100% {
-    -moz-transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    -moz-transform: scale(8);
     opacity: 0;
   }
 }
 
 @-webkit-keyframes accoladescale {
   0% {
-    -webkit-transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
-    opacity: 1;
+    -webkit-transform: scale(0);
+    opacity: 75;
+  }
+  25% {
+    -webkit-transform: scale(3);
+    opacity: 100;
+  }
+  35% {
+    -webkit-transform: scale(3);
+    opacity: 100;
   }
   100% {
-    -webkit-transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    -webkit-transform: scale(8);
     opacity: 0;
   }
 }
 
 @keyframes accoladescale {
   0% {
-    transform: scale(1) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
-    opacity: 1;
+    transform: scale(0);
+    opacity: 75;
+  }
+  25% {
+    transform: scale(3);
+    opacity: 100;
+  }
+  35% {
+    transform: scale(3.2);
+    opacity: 100;
   }
   100% {
-    transform: scale(50) translate(calc( var(--x) * 1px ), calc( var(--y) * 1px ) ) translate(-50%, -50%);
+    transform: scale(8);
     opacity: 0;
   }
 }
