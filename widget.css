@@ -182,11 +182,12 @@
      -moz-animation: accoladescale 4s ease-in forwards;
           animation: accoladescale 4s ease-in forwards;
   background: rgba(0,0,0,0);
+  font-weight: 600;
 }
 
 .b-accolade {
-  text-shadow: #fff 1px 1px 20px;
-  color: black;
+  text-shadow: #000 1px 1px 10px;
+  color: #fcd395;
 }
 
 .w-accolade {

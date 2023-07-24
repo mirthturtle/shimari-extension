@@ -18,7 +18,10 @@ const initiateOGSObserver = () => {
 
       } else if (window.location.href.startsWith('https://online-go.com/game')) {
         console.log('On Game page.');
+        clearExistingAutoDisablers();
         setUpGameObserver();
+      } else {
+        clearExistingAutoDisablers();
       }
     }
   });
@@ -125,16 +128,24 @@ function getUsernameFor(color) {
 
 function runDisciplineBlocker() {
   // check localstorage for blockers
-  chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
-    console.log('Discipline blocker says:', items);
-    if (items.logged_in && items.blocker) {
-      disablePlayButtons();
-    } else {
-      enablePlayButtons();
-    }
-    removeExistingShimariWidgets();
-    injectShimariWidget(items.logged_in, items.blocker);
-  });
+  if (chrome.storage) {
+    chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
+      console.log('Discipline blocker says:', items);
+      if (items.logged_in && items.blocker) {
+        disablePlayButtons();
+      } else {
+        enablePlayButtons();
+      }
+      removeExistingShimariWidgets();
+      injectShimariWidget(items.logged_in, items.blocker);
+    });
+  }
+}
+
+function clearExistingAutoDisablers() {
+  if (buttonAutoDisabler) {
+    clearInterval(buttonAutoDisabler);
+  }
 }
 
 // get fresh data in chrome storage and redraw the widget
@@ -227,9 +238,7 @@ function removeExistingShimariWidgets() {
 }
 
 function disablePlayButtons() {
-  if (buttonAutoDisabler) {
-    clearInterval(buttonAutoDisabler);
-  }
+  clearExistingAutoDisablers();
   buttonAutoDisabler = setInterval(function() {
     let buttons = document.getElementsByTagName("button");
     for (const button of buttons) {
