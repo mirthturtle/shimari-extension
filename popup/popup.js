@@ -1,5 +1,5 @@
-const url = `http://localhost:3000/go/learners/extension`;
-// const url = `https://mirthturtle.com/go/learners/extension`;
+// const url = `http://localhost:3000/go/learners/extension`;
+const url = `https://mirthturtle.com/go/learners/extension`;
 
 // on popup click, send request for info to backend
 chrome.runtime.sendMessage(

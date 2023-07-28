@@ -3,7 +3,7 @@
 
 console.log("Service worker (background script)")
 
-const prod = false;
+const prod = true;
 const host = prod ? "mirthturtle.com" : "localhost:3000";
 const statusUrl = `http${prod ? 's' : ''}://${host}/go/learners/extension`;
 const syncUrl = `http${prod ? 's' : ''}://${host}/go/learners/sync_all.json`;
