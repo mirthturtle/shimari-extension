@@ -1,34 +1,36 @@
-const host = "localhost:3000"   // "mirthturtle.com"
-const url = `http://${host}/go/learners/extension`;
+const url = `http://localhost:3000/go/learners/extension`;
+// const url = `https://mirthturtle.com/go/learners/extension`;
 
 // on popup click, send request for info to backend
-  chrome.runtime.sendMessage(
-    // calls the service worker
-    { action: "getShimariStatus" },
-    response => {
-      console.log('response', response);
+chrome.runtime.sendMessage(
+  // calls the service worker
+  { action: "getShimariStatus" },
+  response => {
+    console.log('response', response);
 
-      if (response.logged_in) {
-        console.log("Logged in on the popup");
+    if (response.logged_in) {
+      console.log("Logged in on the popup");
 
-        document.getElementById('log-text').innerHTML = `Welcome, ${response.username}.`;
-        document.getElementById('log-text').style.display = 'inline-block';
+      document.getElementById('log-text').innerHTML = `Welcome, ${response.username}.`;
+      document.getElementById('log-text').style.display = 'inline-block';
 
-        // set the settings statuses
-        document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
-        document.getElementById('focus-indicator').innerHTML   = response.discipline_focus ? '⚪' : '⚫';
-        document.getElementById('effects-indicator').innerHTML = response.resign_effects ? '⚪' : '⚫';
+      // set the settings statuses
+      document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
+      document.getElementById('focus-indicator').innerHTML   = response.discipline_focus ? '⚪' : '⚫';
+      document.getElementById('effects-indicator').innerHTML = response.resign_effects ? '⚪' : '⚫';
+      document.getElementById('scroller-indicator').innerHTML = response.ogs_mousewheel ? '⚪' : '⚫';
 
-      } else if (response.logged_in == false) {
-        console.log("Logged out on the popup");
-        document.getElementById('notlog-text').style.display = 'inline-block';
+    } else if (response.logged_in == false) {
+      console.log("Logged out on the popup");
+      document.getElementById('notlog-text').style.display = 'inline-block';
+      document.querySelector('.settings-flex').style.display = 'none';
 
-      } else {
-        console.error("Request failed on the popup");
-        document.getElementById('error-general').style.display = 'inline-block';
-      }
+    } else {
+      console.error("Request failed on the popup");
+      document.getElementById('error-general').style.display = 'inline-block';
     }
-  );
+  }
+);
 
 // Attach links to site
 let element;
@@ -68,6 +70,16 @@ let element;
     element.addEventListener('click', function() {
       chrome.runtime.sendMessage(
         { action: "goToSourceCode" });
+    }, false);
+  }
+});
+
+['edit-settings-link'].forEach(ele => {
+  element = document.getElementById(ele);
+  if (element) {
+    element.addEventListener('click', function() {
+      chrome.runtime.sendMessage(
+        { action: "goToSettingsPage" });
     }, false);
   }
 });

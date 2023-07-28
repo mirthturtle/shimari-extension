@@ -69,3 +69,14 @@ hr {
   cursor: pointer;
   color: #c7c7c7;
 }
+
+.settings-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#edit-settings-link {
+  text-decoration: underline;
+  cursor: pointer;
+}
