@@ -11,6 +11,7 @@ chrome.runtime.sendMessage(
     if (response.logged_in) {
       console.log("Logged in on the popup");
 
+      document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('log-text').innerHTML = `Welcome, ${response.username}.`;
       document.getElementById('log-text').style.display = 'inline-block';
 
@@ -22,11 +23,14 @@ chrome.runtime.sendMessage(
 
     } else if (response.logged_in == false) {
       console.log("Logged out on the popup");
+
+      document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('notlog-text').style.display = 'inline-block';
       document.querySelector('.settings-flex').style.display = 'none';
 
     } else {
       console.error("Request failed on the popup");
+      document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('error-general').style.display = 'inline-block';
     }
   }

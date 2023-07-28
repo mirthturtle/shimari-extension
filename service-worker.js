@@ -70,6 +70,22 @@ function getStatusForExtension(sendResponse) {
         console.log('Status saved.');
         sendResponse(json);
       });
+    }).catch(error => {
+      if (typeof error.json === "function") {
+        error.json().then(jsonError => {
+          console.log("Json error from status API", jsonError);
+          sendResponse('error');
+        }).catch(genericError => {
+          console.log("Generic error from status API", error.statusText);
+          sendResponse('error');
+
+        });
+      } else {
+          console.log("Shimari status error");
+          console.log(error);
+          sendResponse('error');
+
+      }
     });
   });
 }
@@ -87,6 +103,19 @@ function requestSyncFromBackend(sendResponse) {
     .then((json) => {
       console.log('Sync response', json);
       sendResponse(json);
-    });
+    }).catch(error => {
+      if (typeof error.json === "function") {
+        error.json().then(jsonError => {
+            console.log("Shimari sync error");
+            console.log(jsonError);
+        }).catch(genericError => {
+            console.log("Shimari sync generic error");
+            console.log(error.statusText);
+        });
+      } else {
+        console.log("Sync error");
+        console.log(error);
+      }
+    });;
   });
 }

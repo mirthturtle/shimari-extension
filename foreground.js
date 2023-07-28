@@ -203,7 +203,8 @@ function setUpGameObserver() {
                 popStoneEffectWithUsername("B", usernameB);
               }
               // autosync if our game
-              if (items.integrations.includes(usernameB) || items.integrations.includes(usernameW)) {
+              if (usernameB && usernameW && items.integrations &&
+                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
               }
             });
@@ -216,7 +217,7 @@ function setUpGameObserver() {
                 popStoneEffectWithUsername("W", usernameW);
               }
               // autosync if our game
-              if (usernameB && usernameW &&
+              if (usernameB && usernameW && items.integrations &&
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
               }
