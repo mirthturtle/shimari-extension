@@ -40,6 +40,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       url: 'https://mirthturtle.com/go/settings#extension'
     });
 
+  } else if ( message.action === "goToPregame" ) {
+    chrome.tabs.update(null, {
+      url: 'https://mirthturtle.com/go/pregame'
+    });
+
   } else if ( message.action === "refreshForWidget" ) {
     getStatusForExtension(sendResponse);
     return true;

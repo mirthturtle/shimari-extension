@@ -14,6 +14,7 @@ chrome.runtime.sendMessage(
       document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('log-text').innerHTML = `Welcome, ${response.username}.`;
       document.getElementById('log-text').style.display = 'inline-block';
+      document.getElementById('edit-settings-link').style.display = 'inline-block';
 
       // set the settings statuses
       document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
@@ -26,7 +27,6 @@ chrome.runtime.sendMessage(
 
       document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('notlog-text').style.display = 'inline-block';
-      document.querySelector('.settings-flex').style.display = 'none';
 
     } else {
       console.error("Request failed on the popup");
@@ -87,3 +87,14 @@ let element;
     }, false);
   }
 });
+
+['pregame-link'].forEach(ele => {
+  element = document.getElementById(ele);
+  if (element) {
+    element.addEventListener('click', function() {
+      chrome.runtime.sendMessage(
+        { action: "goToPregame" });
+    }, false);
+  }
+});
+

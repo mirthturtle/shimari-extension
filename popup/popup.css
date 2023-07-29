@@ -2,7 +2,7 @@ body {
   background-color: #0a0a0a;
   color: #eee;
 
-  width: 170px;
+  width: 200px;
   height: 270px;
   text-align: center;
 }
@@ -20,13 +20,14 @@ hr {
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
-  margin: 10px auto;
+  margin: 5px auto;
 }
 
 #notlog-text {
-  color: brown;
+  color: #80aeed;
   cursor: pointer;
   display: none;
+  text-decoration: underline;
 }
 
 #log-text {
@@ -38,14 +39,25 @@ hr {
   display: none;
 }
 
+.header-flex {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .shimari-image {
   width: 140px;
-  margin: 10px;
+  margin: 10px 0;
+}
+
+.pregame-image {
+  width: 25px;
 }
 
 #status-panel {
   text-align: left;
-  margin: 20px auto;
+  margin: 15px;
   width: 130px;
 }
 
@@ -79,4 +91,5 @@ hr {
 #edit-settings-link {
   text-decoration: underline;
   cursor: pointer;
+  display: none;
 }
