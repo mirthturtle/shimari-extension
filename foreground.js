@@ -2,9 +2,7 @@ console.log("Shimari Extension active on this page.")
 let buttonAutoDisabler;
 let gameStateObserver;
 
-// PLAY PAGE / DISCIPLINE BLOCKER
-
-const initiateOGSObserver = () => {
+const initiatePageObserver = () => {
   let knownHref = document.location.href;
 
   const body = document.querySelector("body");
@@ -13,7 +11,6 @@ const initiateOGSObserver = () => {
     if (knownHref !== document.location.href) {
       knownHref = document.location.href;
 
-      // discipline blockers
       if (window.location.href.startsWith("https://online-go.com/play")) {
         console.log('On Play page.');
         runDisciplineBlocker();
@@ -22,6 +19,10 @@ const initiateOGSObserver = () => {
         console.log('On Game page.');
         clearExistingAutoDisablers();
         setUpGameObserver();
+
+      } else if (window.location.href.includes('mirthturtle.com/go')) {
+        clearAnyExtensionCallouts();
+
       } else {
         clearExistingAutoDisablers();
       }
@@ -37,6 +38,14 @@ const initiateOGSObserver = () => {
     setUpGameObserver();
   }
 };
+
+// hide any ads for the extension itself
+function clearAnyExtensionCallouts() {
+  const callout = document.querySelector('.interface-extension-callout');
+  if (callout) {
+    callout.remove();
+  }
+}
 
 function runDisciplineBlocker() {
   // check localstorage for blockers
@@ -494,4 +503,4 @@ if ( window.addEventListener ) {
 
 // ON PAGE LOAD
 
-window.onload = initiateOGSObserver;
+window.onload = initiatePageObserver;
