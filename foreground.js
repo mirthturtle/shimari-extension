@@ -7,21 +7,17 @@ const initiatePageObserver = () => {
 
   const body = document.querySelector("body");
 
+  // these are called when the Href changes; OGS is a single-page app
   const hrefObserver = new MutationObserver(mutations => {
     if (knownHref !== document.location.href) {
       knownHref = document.location.href;
 
       if (window.location.href.startsWith("https://online-go.com/play")) {
-        console.log('On Play page.');
         runDisciplineBlocker();
 
       } else if (window.location.href.startsWith('https://online-go.com/game')) {
-        console.log('On Game page.');
         clearExistingAutoDisablers();
         setUpGameObserver();
-
-      } else if (window.location.href.includes('mirthturtle.com/go')) {
-        clearAnyExtensionCallouts();
 
       } else {
         clearExistingAutoDisablers();
@@ -29,15 +25,19 @@ const initiatePageObserver = () => {
     }
   });
   hrefObserver.observe(body, { childList: true, subtree: true });
-  console.log('OGS observer activated.');
 
-  // make initial observation
+  makeInitialObservations();
+};
+
+function makeInitialObservations() {
   if (window.location.href.startsWith("https://online-go.com/play")) {
     refreshForWidget();
   } else if (window.location.href.startsWith("https://online-go.com/game")) {
     setUpGameObserver();
+  } else if (window.location.href.includes('mirthturtle.com/go')) {
+    clearAnyExtensionCallouts();
   }
-};
+}
 
 // hide any ads for the extension itself
 function clearAnyExtensionCallouts() {
@@ -47,12 +47,12 @@ function clearAnyExtensionCallouts() {
   }
 }
 
+// check localstorage for blockers
 function runDisciplineBlocker() {
-  // check localstorage for blockers
   window.setTimeout(() => {
     if (chrome.storage) {
       chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
-        console.log('Discipline blocker says:', items);
+        console.log('Shimari discipline blocker says:', items);
         if (items.logged_in && items.blocker) {
           disablePlayButtons();
         } else {
@@ -65,13 +65,14 @@ function runDisciplineBlocker() {
   }, 250);
 }
 
+// keep buttons enabled on other pages
 function clearExistingAutoDisablers() {
   if (buttonAutoDisabler) {
     clearInterval(buttonAutoDisabler);
   }
 }
 
-// get fresh data in chrome storage and redraw the widget
+// get fresh data in chrome storage and redraw the blocker widget
 function refreshForWidget() {
   let el = document.querySelector('.shimari-refresh-link');
   if (el) {
@@ -200,13 +201,10 @@ function setUpGameObserver() {
       if (knownGame === gameId) {
         // we've been on this game for a bit.
         newState = findGameStatusOnPage();
-        // console.log('newstate', newState);
 
         // check for a change in state
         if (knownGameState !== newState) {
           if (newState === "B") {
-            console.log('B wins!');
-
             chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
               if (items.resign_effects && usernameB) {
                 popStoneEffectWithUsername("B", usernameB);
@@ -219,8 +217,6 @@ function setUpGameObserver() {
             });
 
           } else if (newState === "W") {
-            console.log('W wins!');
-
             chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
               if (items.resign_effects && usernameW) {
                 popStoneEffectWithUsername("W", usernameW);
@@ -244,7 +240,6 @@ function setUpGameObserver() {
     });
 
     gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
-    console.log('Game status observer activated.');
   }, 500);
 }
 
@@ -272,12 +267,10 @@ function findGameStatusOnPage() {
 }
 
 function doAutosync() {
-  console.log('Autosync request to service worker');
-
   chrome.runtime.sendMessage(
     { action: 'requestServerSync'},
     response => {
-      console.log('Sync completed.');
+      console.log('Shimari sync completed.');
     }
   );
 }
