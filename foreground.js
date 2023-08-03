@@ -202,8 +202,9 @@ function setUpGameObserver() {
         // we've been on this game for a bit.
         newState = findGameStatusOnPage();
 
-        // check for a change in state
+        // check for a change in state to detect win
         if (knownGameState !== newState) {
+          // B wins
           if (newState === "B") {
             chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
               if (items.resign_effects && usernameB) {
@@ -216,8 +217,9 @@ function setUpGameObserver() {
               }
             });
 
+          // W wins
           } else if (newState === "W") {
-            chrome.storage.sync.get(['resign_effects', 'username'], function(items) {
+            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
               if (items.resign_effects && usernameW) {
                 popStoneEffectWithUsername("W", usernameW);
               }
@@ -267,12 +269,16 @@ function findGameStatusOnPage() {
 }
 
 function doAutosync() {
-  chrome.runtime.sendMessage(
-    { action: 'requestServerSync'},
-    response => {
-      console.log('Shimari sync completed.');
-    }
-  );
+  console.log('Shimari initiating autosync...');
+
+  window.setTimeout(() => {
+    chrome.runtime.sendMessage(
+      { action: 'requestServerSync'},
+      response => {
+        console.log('Shimari sync completed.');
+      }
+    );
+  }, 2000);
 }
 
 // GAMEOVER EFFECTS

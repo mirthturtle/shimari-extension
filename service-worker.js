@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Returns logged-in status & settings
   if (message.action === "getShimariStatus") {
     getStatusForExtension(sendResponse);
-    return true; // Indicates that the response will be sent asynchronously
+    return true;
 
   } else if ( message.action === "goToGoSite" ) {
     chrome.tabs.update(null, {
@@ -50,11 +50,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
 
   } else if (message.action === "requestServerSync") {
-    window.setTimeout(() => {
-      requestSyncFromBackend(sendResponse);
-    }, 500);
-
-    return true; // Indicates that the response will be sent asynchronously
+    requestSyncFromBackend(sendResponse);
+    return true;
   }
 });
 
@@ -83,13 +80,11 @@ function getStatusForExtension(sendResponse) {
         }).catch(genericError => {
           console.log("Generic error from status API", error.statusText);
           sendResponse('error');
-
         });
       } else {
           console.log("Shimari status error");
           console.log(error);
           sendResponse('error');
-
       }
     });
   });
@@ -107,7 +102,9 @@ function requestSyncFromBackend(sendResponse) {
     .then((response) => response.json())
     .then((json) => {
       console.log('Sync response', json);
-      sendResponse(json);
+
+      console.log('Updating status for widget...');
+      getStatusForExtension(sendResponse);
     }).catch(error => {
       if (typeof error.json === "function") {
         error.json().then(jsonError => {
