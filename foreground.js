@@ -314,7 +314,7 @@ function popAccolade(color, username) {
 
 function popStoneEffectWithUsername(color, username) {
   createAnimationOverlay();
-  const numStones = 150;
+  const numStones = 100;
 
   for (let i = 0; i < numStones; i++) {
     stonesArray.push(createMovingStone(color));
