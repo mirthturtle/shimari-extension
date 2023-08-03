@@ -1,8 +1,8 @@
 {
     // Comments are accepted in the manifest, even though it is JSON.
     "manifest_version": 3,
-    "name": "Shimari Extension – Extended Discipline",
-    "description": "Companion to Shimari Go software.",
+    "name": "Shimari – Extended Discipline",
+    "description": "Companion to the Shimari Go platform. Modify OGS to add discipline blockers, visual effects, and UX features.",
     "version": "1.0.1",
     "icons": {
         "16": "img/flame16.png",
@@ -11,7 +11,7 @@
         "128": "img/flame128.png"
     },
     "action": {
-        "default_title": "Shimari Extension – Extended Discipline",
+        "default_title": "Shimari – Extended Discipline",
         "default_popup": "popup/popup.html"
     },
     "permissions": ["cookies", "storage"],
