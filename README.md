@@ -1,4 +1,4 @@
-![Shimari Extension](https://github.com/christiancodes/shimari-extension/blob/main/img/shimari-extension-border.png "Shimari Extension")
+![Shimari Extension](https://github.com/mirthturtle/shimari-extension/blob/main/img/shimari-extension-border.png "Shimari Extension")
 
 A Chrome Extension for [Go](https://en.wikipedia.org/wiki/Go_(game)) training. Extends the [Shimari](https://mirthturtle.com/go) platform to modify your [OGS](https://online-go.com/) experience.
 
