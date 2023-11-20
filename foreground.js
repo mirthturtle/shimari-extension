@@ -479,12 +479,12 @@ function handleMouseWheelDirection( direction ) {
   const prevBtn = document.querySelectorAll('.move-control')[2];
   const nextBtn = document.querySelectorAll('.move-control')[4];
 
-  if ( direction == 'down' ) {
+  if ( prevBtn && direction == 'down' ) {
     var a = document.querySelector('.Goban:hover');
     if (a) {
       prevBtn.click();
     }
-  } else if ( direction == 'up' ) {
+  } else if ( nextBtn && direction == 'up' ) {
     var b = document.querySelector('.Goban:hover');
     if (b) {
       nextBtn.click();
