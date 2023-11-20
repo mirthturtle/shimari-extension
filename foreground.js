@@ -12,7 +12,8 @@ const initiatePageObserver = () => {
     if (knownHref !== document.location.href) {
       knownHref = document.location.href;
 
-      if (window.location.href.startsWith("https://online-go.com/play")) {
+      if (window.location.href.startsWith("https://online-go.com/play") &&
+          !window.location.href.startsWith("https://online-go.com/player")) {
         runDisciplineBlocker();
 
       } else if (window.location.href.startsWith('https://online-go.com/game')) {
@@ -30,7 +31,8 @@ const initiatePageObserver = () => {
 };
 
 function makeInitialObservations() {
-  if (window.location.href.startsWith("https://online-go.com/play")) {
+  if (window.location.href.startsWith("https://online-go.com/play") &&
+     !window.location.href.startsWith("https://online-go.com/player")) {
     refreshForWidget();
   } else if (window.location.href.startsWith("https://online-go.com/game")) {
     setUpGameObserver();
