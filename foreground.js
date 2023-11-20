@@ -193,7 +193,7 @@ function setUpGameObserver() {
   }
 
   window.setTimeout(() => {
-    let stateDiv = document.getElementsByClassName("play-controls")[0];
+    let stateDiv = document.getElementsByClassName("PlayControls")[0];
 
     gameStateObserver = new MutationObserver(mutations => {
       let gameId = window.location.href.split("https://online-go.com/game/")[1];
