@@ -197,7 +197,7 @@ function setUpGameObserver() {
   window.setTimeout(() => {
     let stateDiv = document.getElementsByClassName("PlayControls")[0];
 
-    gameStateObserver = new MutationObserver(mutations => {
+    gameStateObserver = new MutationObserver((mutations, observer) => {
       let gameId = window.location.href.split("https://online-go.com/game/")[1];
 
       if (knownGame === gameId) {
@@ -216,6 +216,9 @@ function setUpGameObserver() {
               if (usernameB && usernameW && items.integrations &&
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
+                addReviewContainer();
+
+                observer.disconnect();
               }
             });
 
@@ -229,6 +232,9 @@ function setUpGameObserver() {
               if (usernameB && usernameW && items.integrations &&
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
+                addReviewContainer();
+
+                observer.disconnect();
               }
             });
           }
@@ -244,6 +250,39 @@ function setUpGameObserver() {
     });
 
     gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
+  }, 500);
+}
+
+function addReviewContainer() {
+  window.setTimeout(() => {
+    let analyzeModeButtonsDiv = document.getElementsByClassName("analyze-mode-buttons")[0];
+    if (analyzeModeButtonsDiv) {
+      let reviewGameContainer = document.createElement('div');
+      reviewGameContainer.className = "review-container";
+
+      // create logo image
+      var reviewLogoLink = document.createElement('a');
+      reviewLogoLink.href = "https://mirthturtle.com/go/games/latest";
+      reviewLogoLink.target = "_blank";
+      var reviewGameImage = document.createElement('img');
+      reviewGameImage.className = "shimari-widget-logo";
+      reviewGameImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+      reviewLogoLink.appendChild(reviewGameImage);
+
+      // create text link
+      let reviewTextLink = document.createElement('a');
+      reviewTextLink.className = "review-text-link";
+      reviewTextLink.innerText = "Review now";
+      reviewTextLink.target = "_blank";
+      reviewTextLink.href = "https://mirthturtle.com/go/games/latest";
+
+      // add items to container
+      reviewGameContainer.appendChild(reviewLogoLink);
+      reviewGameContainer.appendChild(reviewTextLink);
+
+      // add to page
+      analyzeModeButtonsDiv.insertBefore(reviewGameContainer, analyzeModeButtonsDiv.firstChild);
+    }
   }, 500);
 }
 

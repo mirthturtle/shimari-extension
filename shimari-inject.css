@@ -268,3 +268,36 @@
 body {
   overscroll-behavior-y: none;
 }
+
+/* Review Now Button */
+
+/* override the OGS styles */
+.analyze-mode-buttons {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+
+.review-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 110px;
+  height: 60px;
+  border-radius: 10px;
+  border: 1px black solid;
+  background-color: #0a0a0a;
+  padding: 4px 8px;
+  margin: 5px 20px 5px 0;
+          animation: fadeIn 1s;
+  -webkit-animation: fadeIn 1s;
+     -moz-animation: fadeIn 1s;
+       -o-animation: fadeIn 1s;
+      -ms-animation: fadeIn 1s;
+}
+
+.review-text-link {
+  color: white !important;
+  text-decoration: underline;
+}
