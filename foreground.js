@@ -265,7 +265,7 @@ function addReviewContainer() {
       reviewLogoLink.href = "https://mirthturtle.com/go/games/latest";
       reviewLogoLink.target = "_blank";
       var reviewGameImage = document.createElement('img');
-      reviewGameImage.className = "shimari-widget-logo";
+      reviewGameImage.className = "review-image-logo";
       reviewGameImage.src = "https://www.mirthturtle.com/shimari-shine.png";
       reviewLogoLink.appendChild(reviewGameImage);
 
