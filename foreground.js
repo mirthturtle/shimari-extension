@@ -217,6 +217,7 @@ function setUpGameObserver() {
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
                 addReviewContainer();
+                setChatFocus();
 
                 observer.disconnect();
               }
@@ -233,6 +234,7 @@ function setUpGameObserver() {
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
                 addReviewContainer();
+                setChatFocus();
 
                 observer.disconnect();
               }
@@ -323,6 +325,10 @@ function doAutosync() {
 }
 
 // GAMEOVER EFFECTS
+
+function setChatFocus() {
+  document.getElementsByClassName('chat-input')[0].focus();
+}
 
 const stonesArray = [];
 let stoneboxWidth = window.innerWidth;
