@@ -25,5 +25,12 @@
         "js": ["foreground.js"],
         "css": ["shimari-inject.css"],
         "matches": ["https://online-go.com/*", "https://mirthturtle.com/*", "https://www.mirthturtle.com/*"]
-    }]
+    }],
+    "web_accessible_resources": [
+        {
+          "resources": [ "img/go-assets/*" ],
+          "matches": ["https://*.online-go.com/*"]
+        }
+
+    ]
 }

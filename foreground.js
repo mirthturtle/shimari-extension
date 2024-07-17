@@ -383,12 +383,12 @@ function createMovingStone(color) {
   const wrapperElement = document.querySelector('.shimari-animation-overlay');
 
   const outerStone = document.createElement("div");
-  outerStone.className = `moving-stone stone-${getRandomInt(3, 5)}`;
-  var emoji = (color === "B") ? '⚫' : '⚪';
+  outerStone.className = `moving-stone `;
 
-  const innerStone = document.createElement("span");
-  innerStone.className = "inner";
-  innerStone.innerText = emoji;
+  let stoneVariant = (color === "B") ? getRandomInt(0, 3) : getRandomInt(0, 10);
+  const innerStone = document.createElement("img");
+  innerStone.src = chrome.runtime.getURL(`img/go-assets/${(color === "B") ? 'black' : 'white'}${stoneVariant.toString()}.png`);
+  innerStone.className = `inner stone-${getRandomInt(3, 5)}`;
 
   outerStone.appendChild(innerStone);
   wrapperElement.appendChild(outerStone);

@@ -32,3 +32,8 @@ To report a bug or request a new feature, please open an Issue or Pull Request. 
 ## Support
 
 If you enjoy this extension, please consider a [Mirth Turtle Membership](https://mirthturtle.com/memberships) or burning some [Raccooncoin](https://mirthturtle.com/raccooncoin). If you use it on stream, a [shoutout](https://twitch.tv/mirthturtle) is always appreciated.
+
+
+## License
+
+This project's code is released under the MIT License. It also uses images from the [go-assets](https://github.com/atarnowsky/go-assets) repository, available under a [Creative Commons Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.

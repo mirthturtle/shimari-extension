@@ -154,15 +154,18 @@
 }
 
 .stone-3 {
-  font-size: 4vmin;
+  width: 30px;
+  height: 30px;
 }
 
 .stone-4 {
-  font-size: 5vmin;
+  width: 40px;
+  height: 40px;
 }
 
 .stone-5 {
-  font-size: 6vmin;
+  width: 50px;
+  height: 50px;
 }
 
 .shimari-animation-overlay {
@@ -179,7 +182,7 @@
 /* Congrats to winner */
 
 .accolade-text {
-  font-family: Nunito, sans-serif;
+  font-family: Optima, sans-serif;
   z-index: 99999;
   pointer-events: none;
   display: block;
