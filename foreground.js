@@ -36,7 +36,7 @@ function makeInitialObservations() {
     refreshForWidget();
   } else if (window.location.href.startsWith("https://online-go.com/game")) {
     setUpGameObserver();
-  } else if (window.location.href.includes('mirthturtle.com/go')) {
+  } else if (window.location.href.includes('mirthturtle.com/go') || window.location.href.includes('localhost:3000/go')) {
     clearAnyExtensionCallouts();
   }
 }
