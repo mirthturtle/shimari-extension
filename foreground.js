@@ -248,6 +248,8 @@ function setUpGameObserver() {
         knownGameState = newState;
         usernameB = getUsernameFor("B");
         usernameW = getUsernameFor("W");
+
+        addHighlightContainer();
       }
     });
 
@@ -286,6 +288,58 @@ function addReviewContainer() {
       analyzeModeButtonsDiv.insertBefore(reviewGameContainer, analyzeModeButtonsDiv.firstChild);
     }
   }, 500);
+}
+
+function addHighlightContainer() {
+  console.log('ADDING HIGHLIGHT CONTAINER');
+
+  let gameStateDiv = document.getElementsByClassName("game-state")[0];
+  if (gameStateDiv) {
+    let highlightContainer = document.createElement('div');
+    highlightContainer.className = "highlight-container";
+
+    // create logo image
+    var logoImage = document.createElement('img');
+    logoImage.className = "ingame-image-logo";
+    logoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+
+    let highlightForm = document.createElement('form');
+    let highlightButton = document.createElement('input')
+    let highlightTypeId = document.createElement('hidden')
+    let highlightMoveNumber = document.createElement('hidden')
+
+    highlightTypeId.value = 0; // TODO set a different one for each button
+    // pull out the move number
+    highlightMoveNumber.value = document.getElementsByClassName('move-number')[0].innerHTML.slice(5);
+
+
+    let gameId = window.location.href.split("https://online-go.com/game/")[1]
+    highlightForm.action = `https://mirthturtle.com/go/games/${gameId}/highlight`;
+    highlightForm.method = "POST";
+    highlightForm.addEventListener("submit", (event) => {
+      console.log("SUBMITTIN");
+      e.preventDefault();
+      return false;
+    });
+
+    highlightButton.innerText = "Highlight";
+    highlightButton.type = "submit";
+    highlightButton.value = "Highlight";
+    highlightButton.classList.add("highlight-button");
+
+
+
+    highlightForm.appendChild(highlightTypeId);
+    highlightForm.appendChild(highlightMoveNumber);
+    highlightForm.appendChild(highlightButton);
+
+    // add items to container
+    highlightContainer.appendChild(logoImage);
+    highlightContainer.appendChild(highlightForm);
+
+    // add to page
+    gameStateDiv.insertBefore(highlightContainer, gameStateDiv.firstChild);
+  }
 }
 
 function getUsernameFor(color) {
