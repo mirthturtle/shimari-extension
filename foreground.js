@@ -347,7 +347,7 @@ function createAnimationOverlay() {
 
   var overlay = document.createElement('div');
   overlay.className = "shimari-animation-overlay";
-  gobanElement.appendChild(overlay);
+  gobanElement.insertBefore(overlay, gobanElement.firstChild);
 }
 
 function popAccolade(color, username) {
