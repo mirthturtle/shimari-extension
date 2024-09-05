@@ -36,7 +36,8 @@ function makeInitialObservations() {
     refreshForWidget();
   } else if (window.location.href.startsWith("https://online-go.com/game")) {
     setUpGameObserver();
-  } else if (window.location.href.includes('mirthturtle.com/go') || window.location.href.includes('localhost:3000/go')) {
+  } else if (window.location.href.includes('mirthturtle.com/go') || window.location.href.includes('localhost:3000/go') ||
+              window.location.href.includes('mirthturtle.com/shimari') || window.location.href.includes('localhost:3000/shimari')) {
     clearAnyExtensionCallouts();
   }
 }
@@ -115,7 +116,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   flameLink.href = "https://mirthturtle.com/go/pregame";
   var flameImage = document.createElement('img');
   flameImage.className = "shimari-flame-image";
-  flameImage.src = "https://www.mirthturtle.com/shimari-flame.png";
+  flameImage.src = "https://mirthturtle.com/shimari-flame.png";
   flameLink.appendChild(flameImage)
 
   // refresh image/link
@@ -125,7 +126,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   refreshLink.onclick = refreshForWidget;
   var refreshImage = document.createElement('img');
   refreshImage.className = "shimari-refresh-image";
-  refreshImage.src = "https://www.mirthturtle.com/refresh.svg";
+  refreshImage.src = "https://mirthturtle.com/refresh.svg";
   refreshLink.appendChild(refreshImage)
 
   // logo image/link
@@ -134,7 +135,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   shimariLogoLink.target = "_blank";
   var shimariLogoImage = document.createElement('img');
   shimariLogoImage.className = "shimari-widget-logo";
-  shimariLogoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+  shimariLogoImage.src = "https://mirthturtle.com/shimari-shine.png";
   shimariLogoLink.appendChild(shimariLogoImage);
 
   // add items to flex row
@@ -158,6 +159,13 @@ function removeExistingShimariWidgets() {
   const widgets = document.querySelectorAll('.shimari-main-widget');
   widgets.forEach(wid => {
     wid.remove();
+  });
+}
+
+function removeExistingHighlightContainers() {
+  const containers = document.querySelectorAll('.highlight-container');
+  containers.forEach(ct => {
+    ct.remove();
   });
 }
 
@@ -217,6 +225,7 @@ function setUpGameObserver() {
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
                 addReviewContainer();
+                removeExistingHighlightContainers();
                 setChatFocus();
 
                 observer.disconnect();
@@ -234,6 +243,7 @@ function setUpGameObserver() {
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
                 addReviewContainer();
+                removeExistingHighlightContainers();
                 setChatFocus();
 
                 observer.disconnect();
@@ -249,7 +259,20 @@ function setUpGameObserver() {
         usernameB = getUsernameFor("B");
         usernameW = getUsernameFor("W");
 
-        addHighlightContainer();
+        // if it's our game, sync in-progress game to backend and add highlight widget
+        chrome.runtime.sendMessage(
+          { action: 'requestServerSync'},
+          response => {
+            console.log('Shimari sync completed.');
+
+            chrome.storage.sync.get(['integrations'], function(items) {
+              if (usernameB && usernameW && items.integrations &&
+                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+                addHighlightContainer();
+              }
+            });
+          }
+        );
       }
     });
 
@@ -270,7 +293,7 @@ function addReviewContainer() {
       reviewLogoLink.target = "_blank";
       var reviewGameImage = document.createElement('img');
       reviewGameImage.className = "review-image-logo";
-      reviewGameImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+      reviewGameImage.src = "https://mirthturtle.com/shimari-shine.png";
       reviewLogoLink.appendChild(reviewGameImage);
 
       // create text link
@@ -291,54 +314,62 @@ function addReviewContainer() {
 }
 
 function addHighlightContainer() {
-  console.log('ADDING HIGHLIGHT CONTAINER');
+  let existingHighlightContainer = document.getElementsByClassName("highlight-container")[0];
 
-  let gameStateDiv = document.getElementsByClassName("game-state")[0];
-  if (gameStateDiv) {
-    let highlightContainer = document.createElement('div');
-    highlightContainer.className = "highlight-container";
+  if (!existingHighlightContainer) {
+    let gameStateDiv = document.getElementsByClassName("game-state")[0];
+    if (gameStateDiv) {
+      let highlightContainer = document.createElement('div');
+      highlightContainer.className = "highlight-container";
 
-    // create logo image
-    var logoImage = document.createElement('img');
-    logoImage.className = "ingame-image-logo";
-    logoImage.src = "https://www.mirthturtle.com/shimari-shine.png";
+      let highlightTop = document.createElement('div');
+      highlightTop.classList.add("highlight-top");
 
-    let highlightForm = document.createElement('form');
-    let highlightButton = document.createElement('input')
-    let highlightTypeId = document.createElement('hidden')
-    let highlightMoveNumber = document.createElement('hidden')
+      let highlightSpan = document.createElement('span');
+      highlightSpan.classList.add("highlight-span");
+      highlightSpan.innerText = "Tag move for review:";
 
-    highlightTypeId.value = 0; // TODO set a different one for each button
-    // pull out the move number
-    highlightMoveNumber.value = document.getElementsByClassName('move-number')[0].innerHTML.slice(5);
+      // create logo image
+      var logoImage = document.createElement('img');
+      logoImage.className = "ingame-image-logo";
+      logoImage.src = "https://mirthturtle.com/shimari-shine.png";
 
+      // add buttons
+      let highlightButton = document.createElement('input')
+      highlightButton.type = "button";
+      highlightButton.value = "🤔";
+      highlightButton.classList.add("highlight-button");
+      highlightButton.addEventListener("click", (e) => {
+        submitHighlight(e.target, 0);
+      });
 
-    let gameId = window.location.href.split("https://online-go.com/game/")[1]
-    highlightForm.action = `https://mirthturtle.com/go/games/${gameId}/highlight`;
-    highlightForm.method = "POST";
-    highlightForm.addEventListener("submit", (event) => {
-      console.log("SUBMITTIN");
-      e.preventDefault();
-      return false;
-    });
+      let highlightButton2 = document.createElement('input')
+      highlightButton2.type = "button";
+      highlightButton2.value = "🗑️";
+      highlightButton2.classList.add("highlight-button");
+      highlightButton2.addEventListener("click", (e) => {
+        submitHighlight(e.target, 1);
+      });
 
-    highlightButton.innerText = "Highlight";
-    highlightButton.type = "submit";
-    highlightButton.value = "Highlight";
-    highlightButton.classList.add("highlight-button");
+      let highlightButton3 = document.createElement('input')
+      highlightButton3.type = "button";
+      highlightButton3.value = "⭐";
+      highlightButton3.classList.add("highlight-button");
+      highlightButton3.addEventListener("click", (e) => {
+        submitHighlight(e.target, 2);
+      });
 
+      // add items to container
+      highlightTop.appendChild(highlightSpan);
+      highlightTop.appendChild(logoImage);
+      highlightContainer.appendChild(highlightTop);
+      highlightContainer.appendChild(highlightButton);
+      highlightContainer.appendChild(highlightButton3);
+      highlightContainer.appendChild(highlightButton2);
 
-
-    highlightForm.appendChild(highlightTypeId);
-    highlightForm.appendChild(highlightMoveNumber);
-    highlightForm.appendChild(highlightButton);
-
-    // add items to container
-    highlightContainer.appendChild(logoImage);
-    highlightContainer.appendChild(highlightForm);
-
-    // add to page
-    gameStateDiv.insertBefore(highlightContainer, gameStateDiv.firstChild);
+      // add to page
+      gameStateDiv.insertBefore(highlightContainer, gameStateDiv.firstChild);
+    }
   }
 }
 
@@ -599,6 +630,39 @@ if ( window.addEventListener ) {
   document.addEventListener( 'DOMMouseScroll', function( e ) {
     handleMouseWheelDirection( detectMouseWheelDirection( e ) );
   });
+}
+
+// HIGHLIGHTING
+
+const submitHighlight = async (buttonElement, typeId) => {
+  const ogsId = window.location.href.split("https://online-go.com/game/")[1];
+  const moveNumber = document.getElementsByClassName('move-number')[0].innerHTML.slice(5);
+
+  // calls the service worker
+  chrome.runtime.sendMessage(
+    {
+      action: "sendHighlightRequest",
+      ogsId: ogsId,
+      moveNumber: moveNumber,
+      typeId: typeId
+    },
+    response => {
+      console.log('response from runtime', response);
+    }
+  );
+
+  // button effects
+  let originalText = buttonElement.value;
+  buttonElement.value = "✅";
+  buttonElement.classList.add('hot-button');
+  buttonElement.setAttribute("disabled", "disabled");
+
+  window.setTimeout(() => {
+    // reset back to original
+    buttonElement.value = originalText;
+    buttonElement.classList.remove('hot-button');
+    buttonElement.removeAttribute("disabled");
+  }, 1500)
 }
 
 // ON PAGE LOAD

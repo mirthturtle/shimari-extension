@@ -3,10 +3,11 @@
 
 console.log("Service worker (background script)")
 
-const prod = true;
-const host = prod ? "mirthturtle.com" : "localhost:3000";
-const statusUrl = `http${prod ? 's' : ''}://${host}/go/learners/extension`;
-const syncUrl = `http${prod ? 's' : ''}://${host}/go/learners/sync_all.json`;
+const prod = false;
+const host = prod ? "https://mirthturtle.com" : "http://localhost:3000";
+const statusUrl = `${host}/go/learners/extension`;
+const syncUrl = `${host}/go/learners/sync_all.json`;
+const highlightUrl = `${host}/go/games`;
 
 // Listen for messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -52,7 +53,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.action === "requestServerSync") {
     requestSyncFromBackend(sendResponse);
     return true;
+
+  } else if (message.action === "sendHighlightRequest") {
+    const response =
+      fetch(`${highlightUrl}/highlight?ogs_id=${message.ogsId}&move=${message.moveNumber}&type_id=${message.typeId}`, {
+        method: "POST"
+      });
+    return true;
   }
+
 });
 
 function getStatusForExtension(sendResponse) {
