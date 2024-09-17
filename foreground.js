@@ -224,8 +224,8 @@ function setUpGameObserver() {
               if (usernameB && usernameW && items.integrations &&
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
-                addReviewContainer();
                 removeExistingHighlightContainers();
+                addReviewContainer();
                 setChatFocus();
 
                 observer.disconnect();
@@ -242,8 +242,8 @@ function setUpGameObserver() {
               if (usernameB && usernameW && items.integrations &&
                 (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
                 doAutosync();
-                addReviewContainer();
                 removeExistingHighlightContainers();
+                addReviewContainer();
                 setChatFocus();
 
                 observer.disconnect();
@@ -259,20 +259,25 @@ function setUpGameObserver() {
         usernameB = getUsernameFor("B");
         usernameW = getUsernameFor("W");
 
-        // if it's our game, sync in-progress game to backend and add highlight widget
-        chrome.runtime.sendMessage(
-          { action: 'requestServerSync'},
-          response => {
-            console.log('Shimari sync completed.');
+        // if game is in progress:
+        // check if it's our game, sync in-progress game to backend and add highlight widget
+        window.setTimeout(function() {
+          if (knownGameState === "?") {
+            chrome.runtime.sendMessage(
+              { action: 'requestServerSync'},
+              response => {
+                console.log('Shimari sync completed.');
 
-            chrome.storage.sync.get(['integrations'], function(items) {
-              if (usernameB && usernameW && items.integrations &&
-                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-                addHighlightContainer();
+                chrome.storage.sync.get(['integrations'], function(items) {
+                  if (usernameB && usernameW && items.integrations &&
+                    (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+                    addHighlightContainer();
+                  }
+                });
               }
-            });
+            );
           }
-        );
+        }, 500);
       }
     });
 
@@ -382,12 +387,16 @@ function findGameStatusOnPage() {
   let gameStateDiv = document.getElementsByClassName("game-state")[0];
   if (gameStateDiv) {
     rawStatusString = gameStateDiv.children[0].innerHTML;
+    // if the move highlighter is also in game-state div, it's pushed the status up
+    if (gameStateDiv.children[1]) {
+      rawStatusString += gameStateDiv.children[1].innerHTML;
+    }
 
     if (rawStatusString.includes("White wins")) {
       return "W";
     } else if (rawStatusString.includes("Black wins")) {
       return "B";
-    } else if (rawStatusString.includes("to move")) {
+    } else if (rawStatusString.includes("move") || rawStatusString.includes("Submitting")) {
       return "?";
     }
 
