@@ -202,6 +202,11 @@ function setUpGameObserver() {
     gameStateObserver.disconnect();
   }
 
+  // focus on chat
+  window.setTimeout(() => {
+    document.getElementsByClassName('chat-input')[0].focus();
+  }, 500);
+
   window.setTimeout(() => {
     let stateDiv = document.getElementsByClassName("PlayControls")[0];
 
