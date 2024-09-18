@@ -5,6 +5,7 @@ A Chrome Extension for [Go](https://en.wikipedia.org/wiki/Go_(game)) training. E
 
 ## Features
 
+- **NEW!** Tag moves as you play to review later
 - Discipline helpers: Blocks you from starting a new game unless you've:
   - reviewed your last game on [Shimari](https://mirthturtle.com/shimari)
   - recently done a [Pre-game Focus](https://mirthturtle.com/go/pregame)
@@ -23,7 +24,12 @@ Installing browser extensions is generally unwise from a security perspective, s
 
 ## Usage
 
-After installation, this extension will automatically provide OGS with the above features. The discipline blockers will only work if you're logged into Shimari in your browser session. From there, you can enable or disable specific features in your [settings](https://mirthturtle.com/go/settings).
+After installation, this extension will automatically take effect on OGS.
+
+- To use the discipline blockers, make sure you're logged into Shimari in your browser session.
+- To tag moves during play, ensure you've set up an OGS integration for the account you're playing with.
+
+Enable or disable specific features in your [settings](https://mirthturtle.com/go/settings).
 
 
 ## Issues & Contributions
