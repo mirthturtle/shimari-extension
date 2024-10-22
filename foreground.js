@@ -442,7 +442,7 @@ function getRandomInt(min, max) {
 }
 
 function createAnimationOverlay() {
-  const gobanElement = document.querySelectorAll('.Goban')[1];
+  const gobanElement = document.querySelectorAll('.center-col')[0];
 
   var overlay = document.createElement('div');
   overlay.className = "shimari-animation-overlay";
