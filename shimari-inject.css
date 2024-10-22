@@ -188,7 +188,7 @@
   display: block;
   position: absolute;
   bottom: calc(50%);
-  left: calc(35%);
+  left: calc(40%);
   -webkit-animation: accoladescale 4s ease-in forwards;
      -moz-animation: accoladescale 4s ease-in forwards;
           animation: accoladescale 4s ease-in forwards;
