@@ -20,7 +20,6 @@ chrome.runtime.sendMessage(
       document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
       document.getElementById('focus-indicator').innerHTML   = response.discipline_focus ? '⚪' : '⚫';
       document.getElementById('effects-indicator').innerHTML = response.resign_effects ? '⚪' : '⚫';
-      document.getElementById('scroller-indicator').innerHTML = response.ogs_mousewheel ? '⚪' : '⚫';
 
     } else if (response.logged_in == false) {
       console.log("Logged out on the popup");

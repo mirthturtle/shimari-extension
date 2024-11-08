@@ -10,7 +10,6 @@ A Chrome Extension for [Go](https://en.wikipedia.org/wiki/Go_(game)) training. E
   - reviewed your last game on [Shimari](https://mirthturtle.com/shimari)
   - recently done a [Pre-game Focus](https://mirthturtle.com/go/pregame)
 - Gameover effects: More visually stunning wins and losses. Great for streamers!
-- Adds mousewheel scrolling on games
 
 
 ## Installation

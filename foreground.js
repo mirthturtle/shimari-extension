@@ -601,50 +601,6 @@ function stoneAnimationLoop() {
 
 stoneAnimationLoop();
 
-// SCROLL HELPER
-
-function detectMouseWheelDirection( e ) {
-  var delta = null,  direction = false;
-  if ( !e ) { // if the event is not provided, we get it from the window object
-    e = window.event;
-  }
-  if ( e.wheelDelta ) { // will work in most cases
-    delta = e.wheelDelta / 60;
-  } else if ( e.detail ) { // fallback for Firefox
-    delta = -e.detail / 2;
-  }
-  if ( delta !== null ) {
-    direction = delta > 0 ? 'up' : 'down';
-  }
-  return direction;
-}
-
-function handleMouseWheelDirection( direction ) {
-  const prevBtn = document.querySelectorAll('.move-control')[2];
-  const nextBtn = document.querySelectorAll('.move-control')[4];
-
-  if ( prevBtn && direction == 'down' ) {
-    var a = document.querySelector('.Goban:hover');
-    if (a) {
-      prevBtn.click();
-    }
-  } else if ( nextBtn && direction == 'up' ) {
-    var b = document.querySelector('.Goban:hover');
-    if (b) {
-      nextBtn.click();
-    }
-  }
-}
-
-document.onmousewheel = function( e ) {
-  handleMouseWheelDirection( detectMouseWheelDirection( e ) );
-};
-
-if ( window.addEventListener ) {
-  document.addEventListener( 'DOMMouseScroll', function( e ) {
-    handleMouseWheelDirection( detectMouseWheelDirection( e ) );
-  });
-}
 
 // HIGHLIGHTING
 
