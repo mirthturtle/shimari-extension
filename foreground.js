@@ -95,7 +95,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   mainWidgetElement.className = "shimari-main-widget";
 
   // message element
-  var messageElement = document.createElement('p');
+  var messageElement = document.createElement('span');
   messageElement.className = "shimari-message";
   if (loggedIn) {
     if (blockerMessage) {
@@ -151,8 +151,10 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   mainWidgetElement.appendChild(messageElement);
 
   // add widget to page
-  destinationElement = document.getElementsByClassName('custom-game-row')[0];
-  destinationElement.appendChild(mainWidgetElement);
+  destinationElement = document.getElementById('QuickMatch');
+  destinationElement = destinationElement.parentNode;
+
+  destinationElement.insertBefore(mainWidgetElement, destinationElement.childNodes[1]);
 }
 
 function removeExistingShimariWidgets() {

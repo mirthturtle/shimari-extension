@@ -6,12 +6,16 @@
   border: 1px black solid;
   background-color: #0a0a0a;
   padding: 8px 16px;
-  width: 190px;
+  width: 400px;
           animation: fadeIn 1s;
   -webkit-animation: fadeIn 1s;
      -moz-animation: fadeIn 1s;
        -o-animation: fadeIn 1s;
       -ms-animation: fadeIn 1s;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .shimari-message {
@@ -25,6 +29,7 @@
   justify-content: space-around;
   margin: 0 18px;
   align-items: center;
+  max-width: 175px;
 }
 
 .shimari-refresh-link {
