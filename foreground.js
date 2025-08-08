@@ -209,6 +209,12 @@ function setUpGameObserver() {
     document.getElementsByClassName('chat-input')[0].focus();
   }, 500);
 
+  // remove temporary speed blocker on any goban click
+  let gobans = document.getElementsByClassName("goban-container");
+  for (let i = 0; i < gobans.length; i++) {
+    gobans[i].addEventListener('click', makeGobanClickableAgain, false);
+  }
+
   window.setTimeout(() => {
     let stateDiv = document.getElementsByClassName("PlayControls")[0];
 
