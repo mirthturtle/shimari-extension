@@ -256,6 +256,16 @@ function setUpGameObserver() {
                 observer.disconnect();
               }
             });
+
+          // On state change to Your Move, check for Speed Discipline
+          } else if (newState === "Y") {
+            chrome.storage.sync.get(['discipline_speed'], function(items) {
+              if (items.discipline_speed) {
+                makeGobanUnclickable();
+                window.setTimeout(makeGobanClickableAgain, 5000);
+
+              }
+            });
           }
         }
       } else {
@@ -267,9 +277,9 @@ function setUpGameObserver() {
         usernameW = getUsernameFor("W");
 
         // if game is in progress:
-        // check if it's our game, sync in-progress game to backend and add highlight widget
         window.setTimeout(function() {
-          if (knownGameState === "?") {
+          if (['?', 'Y'].includes(knownGameState)) {
+            // check if it's our game, sync in-progress game to backend and add highlight widget
             chrome.runtime.sendMessage(
               { action: 'requestServerSync'},
               response => {
@@ -290,6 +300,20 @@ function setUpGameObserver() {
 
     gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
   }, 500);
+}
+
+function makeGobanUnclickable() {
+  let gobans = document.getElementsByClassName("Goban");
+  for (let i = 0; i < gobans.length; i++) {
+      gobans[i].classList.add('temporarily-unclickable');
+  }
+}
+
+function makeGobanClickableAgain() {
+  let gobans = document.getElementsByClassName("Goban");
+  for (let i = 0; i < gobans.length; i++) {
+      gobans[i].classList.remove('temporarily-unclickable');
+  }
 }
 
 function addReviewContainer() {
@@ -403,7 +427,9 @@ function findGameStatusOnPage() {
       return "W";
     } else if (rawStatusString.includes("Black wins")) {
       return "B";
-    } else if (rawStatusString.includes("move") || rawStatusString.includes("Submitting")) {
+    } else if (rawStatusString.includes("Your move")) {
+      return "Y";
+    } else if (rawStatusString.includes("to move") || rawStatusString.includes("Submitting")) {
       return "?";
     }
 

@@ -383,3 +383,7 @@ body {
 .hot-button {
   background: #191919;
 }
+
+.temporarily-unclickable {
+  pointer-events: none;
+}

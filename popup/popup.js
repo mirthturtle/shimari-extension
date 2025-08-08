@@ -19,6 +19,7 @@ chrome.runtime.sendMessage(
       // set the settings statuses
       document.getElementById('review-indicator').innerHTML  = response.discipline_review ? '⚪' : '⚫';
       document.getElementById('focus-indicator').innerHTML   = response.discipline_focus ? '⚪' : '⚫';
+      document.getElementById('speed-indicator').innerHTML = response.discipline_speed ? '⚪' : '⚫';
       document.getElementById('effects-indicator').innerHTML = response.resign_effects ? '⚪' : '⚫';
 
     } else if (response.logged_in == false) {
