@@ -220,6 +220,7 @@ function setUpGameObserver() {
 
     gameStateObserver = new MutationObserver((mutations, observer) => {
       let gameId = window.location.href.split("https://online-go.com/game/")[1];
+      let speedBlockerTimeout = null;
 
       if (knownGame === gameId) {
         // we've been on this game for a bit.
@@ -267,11 +268,20 @@ function setUpGameObserver() {
           } else if (newState === "Y") {
             chrome.storage.sync.get(['discipline_speed'], function(items) {
               if (items.discipline_speed) {
-                makeGobanUnclickable();
-                window.setTimeout(makeGobanClickableAgain, 5000);
+                console.log('Speed block!');
 
+                makeGobanUnclickable();
+
+                speedBlockerTimeout = window.setTimeout(makeGobanClickableAgain, 5000);
+              } else {
+                console.log('Something wrong!!!');
               }
             });
+          } else {  // the opponent's turn
+            if (speedBlockerTimeout) {
+              console.log('Clear timeout!');
+              clearTimeout(speedBlockerTimeout);
+            }
           }
         }
       } else {
@@ -313,6 +323,7 @@ function makeGobanUnclickable() {
   for (let i = 0; i < gobans.length; i++) {
       gobans[i].classList.add('temporarily-unclickable');
   }
+  applyTimeoutCursor();
 }
 
 function makeGobanClickableAgain() {
@@ -320,7 +331,17 @@ function makeGobanClickableAgain() {
   for (let i = 0; i < gobans.length; i++) {
       gobans[i].classList.remove('temporarily-unclickable');
   }
+  removeTimeoutCursor();
 }
+
+function applyTimeoutCursor() {
+  document.getElementsByClassName("goban-container")[0].classList.add('timeout-cursor');
+}
+
+function removeTimeoutCursor() {
+  document.getElementsByClassName("goban-container")[0].classList.remove('timeout-cursor');
+}
+
 
 function addReviewContainer() {
   window.setTimeout(() => {

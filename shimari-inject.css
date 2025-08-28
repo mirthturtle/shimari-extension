@@ -387,3 +387,7 @@ body {
 .temporarily-unclickable {
   pointer-events: none;
 }
+
+.timeout-cursor {
+  cursor: url('chrome-extension://__MSG_@@extension_id__/img/timeout-cursor.png'), auto;
+}
