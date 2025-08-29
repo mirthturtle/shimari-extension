@@ -279,8 +279,8 @@ function setUpGameObserver() {
             });
           } else {  // the opponent's turn
             if (speedBlockerTimeout) {
-              console.log('Clear timeout!');
               clearTimeout(speedBlockerTimeout);
+              speedBlockerTimeout = null;
             }
           }
         }
