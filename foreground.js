@@ -1,6 +1,13 @@
 console.log("Shimari Extension active on this page.")
 let buttonAutoDisabler;
 let gameStateObserver;
+let gameStateInterval;
+
+let knownGame;
+let knownGameState;
+let newState;
+let usernameB;
+let usernameW;
 
 const initiatePageObserver = () => {
   let knownHref = document.location.href;
@@ -19,6 +26,8 @@ const initiatePageObserver = () => {
       } else if (window.location.href.startsWith('https://online-go.com/game')) {
         clearExistingAutoDisablers();
         setUpGameObserver();
+        addSpeedBlockRemover();
+        focusOnChat();
 
       } else {
         clearExistingAutoDisablers();
@@ -33,9 +42,13 @@ const initiatePageObserver = () => {
 function makeInitialObservations() {
   if (window.location.href.startsWith("https://online-go.com/play") &&
      !window.location.href.startsWith("https://online-go.com/player")) {
-    refreshForWidget();
+    refreshShimariDataForWidget();
+
   } else if (window.location.href.startsWith("https://online-go.com/game")) {
     setUpGameObserver();
+    addSpeedBlockRemover();
+    focusOnChat();
+
   } else if (window.location.href.includes('mirthturtle.com/go') || window.location.href.includes('localhost:3000/go') ||
               window.location.href.includes('mirthturtle.com/shimari') || window.location.href.includes('localhost:3000/shimari')) {
     clearAnyExtensionCallouts();
@@ -47,6 +60,14 @@ function clearAnyExtensionCallouts() {
   const callout = document.querySelector('.interface-extension-callout');
   if (callout) {
     callout.remove();
+  }
+}
+
+function addSpeedBlockRemover() {
+  // remove temporary speed blocker on any goban click
+  let gobans = document.getElementsByClassName("goban-container");
+  for (let i = 0; i < gobans.length; i++) {
+    gobans[i].addEventListener('click', makeGobanClickableAgain, false);
   }
 }
 
@@ -76,14 +97,14 @@ function clearExistingAutoDisablers() {
 }
 
 // get fresh data in chrome storage and redraw the blocker widget
-function refreshForWidget() {
+function refreshShimariDataForWidget() {
   let el = document.querySelector('.shimari-refresh-link');
   if (el) {
     el.remove();
   }
 
   chrome.runtime.sendMessage(
-    { action: 'refreshForWidget'},
+    { action: 'refreshShimariDataForWidget'},
     response => {
       runDisciplineBlocker();
     }
@@ -123,7 +144,7 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   var refreshLink = document.createElement('a');
   refreshLink.href = "#";
   refreshLink.className = "shimari-refresh-link";
-  refreshLink.onclick = refreshForWidget;
+  refreshLink.onclick = refreshShimariDataForWidget;
   var refreshImage = document.createElement('img');
   refreshImage.className = "shimari-refresh-image";
   refreshImage.src = "https://mirthturtle.com/refresh.svg";
@@ -194,103 +215,167 @@ function enablePlayButtons() {
 // GAME PAGE LOGIC
 
 function setUpGameObserver() {
-  let knownGame;
-  let knownGameState;
-  let newState;
-  let usernameB;
-  let usernameW;
+  let stateDiv = document.getElementsByClassName("PlayControls")[0];
 
+  // if stateDiv not found, retry after pause before running below
+  if (!stateDiv) {
+    gameStateInterval = window.setInterval(() => {
+      stateDiv = document.getElementsByClassName("PlayControls")[0];
+      if (stateDiv) {
+        clearInterval(gameStateInterval);
+      }
+      makeGameObserver(stateDiv);
+    }, 5000);
+  } else {
+    makeGameObserver(stateDiv);
+  }
+}
+
+function makeGameObserver(stateDiv) {
+  console.log('Setting up new game observer.');
+
+  // clear out any old
+  knownGame = null;
+  knownGameState = null;
+  newState = null;
+  usernameB = null;
+  usernameW = null;
   if (gameStateObserver) {
     gameStateObserver.disconnect();
   }
 
-  // focus on chat
-  window.setTimeout(() => {
-    document.getElementsByClassName('chat-input')[0].focus();
-  }, 500);
+  gameStateObserver = new MutationObserver((mutations, observer) => {
+    let gameId = window.location.href.split("https://online-go.com/game/")[1];
+    let speedBlockerTimeout = null;
 
-  window.setTimeout(() => {
-    let stateDiv = document.getElementsByClassName("PlayControls")[0];
+    if (knownGame === gameId) {
+      // we've been on this game for a bit.
+      newState = findGameStatusOnPage();
 
-    gameStateObserver = new MutationObserver((mutations, observer) => {
-      let gameId = window.location.href.split("https://online-go.com/game/")[1];
+      // check for a change in state to detect win or turn
+      if (knownGameState !== newState) {
+        // B wins
+        if (newState === "B") {
+          chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
+            if (items.resign_effects && usernameB) {
+              popStoneEffectWithUsername("B", usernameB);
+            }
+            // autosync if our game
+            if (usernameB && usernameW && items.integrations &&
+              (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+              doAutosync();
+              removeExistingHighlightContainers();
+              addReviewContainer();
+              setChatFocus();
 
-      if (knownGame === gameId) {
-        // we've been on this game for a bit.
-        newState = findGameStatusOnPage();
+              observer.disconnect();
+            }
+          });
 
-        // check for a change in state to detect win
-        if (knownGameState !== newState) {
-          // B wins
-          if (newState === "B") {
-            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
-              if (items.resign_effects && usernameB) {
-                popStoneEffectWithUsername("B", usernameB);
-              }
-              // autosync if our game
-              if (usernameB && usernameW && items.integrations &&
-                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-                doAutosync();
-                removeExistingHighlightContainers();
-                addReviewContainer();
-                setChatFocus();
+        // W wins
+        } else if (newState === "W") {
+          chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
+            if (items.resign_effects && usernameW) {
+              popStoneEffectWithUsername("W", usernameW);
+            }
+            // autosync if our game
+            if (usernameB && usernameW && items.integrations &&
+              (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+              doAutosync();
+              removeExistingHighlightContainers();
+              addReviewContainer();
+              setChatFocus();
 
-                observer.disconnect();
-              }
-            });
+              observer.disconnect();
+            }
+          });
 
-          // W wins
-          } else if (newState === "W") {
-            chrome.storage.sync.get(['resign_effects', 'integrations'], function(items) {
-              if (items.resign_effects && usernameW) {
-                popStoneEffectWithUsername("W", usernameW);
-              }
-              // autosync if our game
-              if (usernameB && usernameW && items.integrations &&
-                (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-                doAutosync();
-                removeExistingHighlightContainers();
-                addReviewContainer();
-                setChatFocus();
-
-                observer.disconnect();
-              }
-            });
+        // On state change to Your Move, check for Speed Discipline
+        } else if (newState === "Y") {
+          chrome.storage.sync.get(['discipline_speed'], function(items) {
+            if (items.discipline_speed) {
+              makeGobanUnclickable();
+              speedBlockerTimeout = window.setTimeout(makeGobanClickableAgain, 5000);
+            }
+          });
+        } else {  // the opponent's turn
+          if (speedBlockerTimeout) {
+            clearTimeout(speedBlockerTimeout);
+            speedBlockerTimeout = null;
           }
         }
-      } else {
-        // newly arrived at game; lock in game info
-        knownGame = gameId;
-        newState = findGameStatusOnPage();
         knownGameState = newState;
-        usernameB = getUsernameFor("B");
-        usernameW = getUsernameFor("W");
-
-        // if game is in progress:
-        // check if it's our game, sync in-progress game to backend and add highlight widget
-        window.setTimeout(function() {
-          if (knownGameState === "?") {
-            chrome.runtime.sendMessage(
-              { action: 'requestServerSync'},
-              response => {
-                console.log('Shimari sync completed.');
-
-                chrome.storage.sync.get(['integrations'], function(items) {
-                  if (usernameB && usernameW && items.integrations &&
-                    (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
-                    addHighlightContainer();
-                  }
-                });
-              }
-            );
-          }
-        }, 500);
       }
-    });
+    } else {
+      // newly arrived at game; lock in game info
+      knownGame = gameId;
+      newState = findGameStatusOnPage();
+      initializeNewGameIfOurs(newState);
+      knownGameState = newState;
+    }
+  });
+  gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
+}
 
-    gameStateObserver.observe(stateDiv, {characterData: true, attributes: true, childList: true, subtree: true});
+function initializeNewGameIfOurs() {
+  knownGameState = newState;
+  usernameB = getUsernameFor("B");
+  usernameW = getUsernameFor("W");
+
+  // if game is in progress:
+  window.setTimeout(function() {
+    if (['?', 'Y'].includes(knownGameState)) {
+      // check if it's our game, sync in-progress game to backend and add highlight widget
+      chrome.runtime.sendMessage(
+        { action: 'requestServerSync'},
+        response => {
+          console.log('Shimari sync completed.');
+
+          chrome.storage.sync.get(['integrations'], function(items) {
+            if (usernameB && usernameW && items.integrations &&
+              (items.integrations.includes(usernameB) || items.integrations.includes(usernameW))) {
+              addHighlightContainer();
+            }
+          });
+        }
+      );
+    }
   }, 500);
 }
+
+function focusOnChat() {
+  window.setTimeout(() => {
+    let chatInput = document.getElementsByClassName('chat-input')[0];
+    if (chatInput) {
+      chatInput.focus()
+    }
+  }, 500);
+}
+
+function makeGobanUnclickable() {
+  let gobans = document.getElementsByClassName("Goban");
+  for (let i = 0; i < gobans.length; i++) {
+      gobans[i].classList.add('temporarily-unclickable');
+  }
+  applyTimeoutCursor();
+}
+
+function makeGobanClickableAgain() {
+  let gobans = document.getElementsByClassName("Goban");
+  for (let i = 0; i < gobans.length; i++) {
+      gobans[i].classList.remove('temporarily-unclickable');
+  }
+  removeTimeoutCursor();
+}
+
+function applyTimeoutCursor() {
+  document.getElementsByClassName("goban-container")[0].classList.add('timeout-cursor');
+}
+
+function removeTimeoutCursor() {
+  document.getElementsByClassName("goban-container")[0].classList.remove('timeout-cursor');
+}
+
 
 function addReviewContainer() {
   window.setTimeout(() => {
@@ -389,6 +474,7 @@ function getUsernameFor(color) {
   return document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0].getElementsByClassName('Player-username')[0].innerHTML;
 }
 
+// returns char or false
 function findGameStatusOnPage() {
   let rawStatusString;
   let gameStateDiv = document.getElementsByClassName("game-state")[0];
@@ -403,11 +489,14 @@ function findGameStatusOnPage() {
       return "W";
     } else if (rawStatusString.includes("Black wins")) {
       return "B";
-    } else if (rawStatusString.includes("move") || rawStatusString.includes("Submitting")) {
+    } else if (rawStatusString.includes("Your move")) {
+      return "Y";
+    } else if (rawStatusString.includes("to move") || rawStatusString.includes("Submitting")) {
       return "?";
     }
 
   } else {
+    console.log('Could not find game status on page');
     return false;
   }
 }

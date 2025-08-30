@@ -5,20 +5,20 @@ console.log("Service worker (background script)")
 
 const prod = true;
 const host = prod ? "https://mirthturtle.com" : "http://localhost:3000";
-const statusUrl = `${host}/go/learners/extension`;
+const userStatusUrl = `${host}/go/learners/extension`;
 const syncUrl = `${host}/go/learners/sync_all.json`;
-const highlightUrl = `${host}/go/games`;
+const highlightUrl = `${host}/go/games/highlight`;
 
 // Listen for messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Returns logged-in status & settings
   if (message.action === "getShimariStatus") {
-    getStatusForExtension(sendResponse);
+    getUserStatusForExtension(sendResponse);
     return true;
 
   } else if ( message.action === "goToGoSite" ) {
     chrome.tabs.update(null, {
-      url: 'https://mirthturtle.com/go'
+      url: 'https://mirthturtle.com/shimari'
     });
 
   } else if ( message.action === "goToMainSite" ) {
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   } else if ( message.action === "goToSourceCode" ) {
     chrome.tabs.update(null, {
-      url: 'https://github.com/christiancodes/shimari-extension'
+      url: 'https://github.com/mirthturtle/shimari-extension'
     });
 
   } else if ( message.action === "goToSettingsPage" ) {
@@ -46,8 +46,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       url: 'https://mirthturtle.com/go/pregame'
     });
 
-  } else if ( message.action === "refreshForWidget" ) {
-    getStatusForExtension(sendResponse);
+  } else if ( message.action === "refreshShimariDataForWidget" ) {
+    getUserStatusForExtension(sendResponse);
     return true;
 
   } else if (message.action === "requestServerSync") {
@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   } else if (message.action === "sendHighlightRequest") {
     const response =
-      fetch(`${highlightUrl}/highlight?ogs_id=${message.ogsId}&move=${message.moveNumber}&type_id=${message.typeId}`, {
+      fetch(`${highlightUrl}?ogs_id=${message.ogsId}&move=${message.moveNumber}&type_id=${message.typeId}`, {
         method: "POST"
       });
     return true;
@@ -64,9 +64,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 });
 
-function getStatusForExtension(sendResponse) {
+function getUserStatusForExtension(sendResponse) {
   chrome.cookies.getAll({ domain: host }, function (cookies) {
-    fetch(statusUrl, {
+    fetch(userStatusUrl, {
       headers: {
         Cookie: cookies
       },
@@ -84,14 +84,14 @@ function getStatusForExtension(sendResponse) {
     }).catch(error => {
       if (typeof error.json === "function") {
         error.json().then(jsonError => {
-          console.log("Json error from status API", jsonError);
+          console.log("Json error from user status API", jsonError);
           sendResponse('error');
         }).catch(genericError => {
-          console.log("Generic error from status API", error.statusText);
+          console.log("Generic error from user status API", error.statusText);
           sendResponse('error');
         });
       } else {
-          console.log("Shimari status error");
+          console.log("Error getting user status.");
           console.log(error);
           sendResponse('error');
       }
@@ -113,7 +113,7 @@ function requestSyncFromBackend(sendResponse) {
       console.log('Sync response', json);
 
       console.log('Updating status for widget...');
-      getStatusForExtension(sendResponse);
+      getUserStatusForExtension(sendResponse);
     }).catch(error => {
       if (typeof error.json === "function") {
         error.json().then(jsonError => {

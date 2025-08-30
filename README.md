@@ -5,11 +5,12 @@ A Chrome Extension for [Go](https://en.wikipedia.org/wiki/Go_(game)) training. E
 
 ## Features
 
-- **NEW!** Tag moves as you play to review later
-- Discipline helpers: Blocks you from starting a new game unless you've:
+- **NEW!** Speed-limiter tool prevents you from playing too quickly
+- Discipline blockers: Stops you from starting a new game unless you've:
   - reviewed your last game on [Shimari](https://mirthturtle.com/shimari)
   - recently done a [Pre-game Focus](https://mirthturtle.com/go/pregame)
-- Gameover effects: More visually stunning wins and losses. Great for streamers!
+- Tag moves to review later as you play
+- Game Over effects: More visually stunning wins and losses. Great for streamers!
 
 
 ## Installation
