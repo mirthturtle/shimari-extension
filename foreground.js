@@ -75,7 +75,7 @@ function addSpeedBlockRemover() {
 function runDisciplineBlocker() {
   window.setTimeout(() => {
     if (chrome.storage) {
-      chrome.storage.sync.get(['blocker', 'logged_in'], function(items) {
+      chrome.storage.sync.get(['blocker', 'logged_in', 'integrations'], function(items) {
         console.log('Shimari discipline blocker says:', items);
         if (items.logged_in && items.blocker) {
           disablePlayButtons();
@@ -83,7 +83,7 @@ function runDisciplineBlocker() {
           enablePlayButtons();
         }
         removeExistingShimariWidgets();
-        injectShimariWidget(items.logged_in, items.blocker);
+        injectShimariWidget(items.logged_in, items.blocker, items.integrations);
       });
     }
   }, 250);
@@ -111,7 +111,7 @@ function refreshShimariDataForWidget() {
   );
 }
 
-function injectShimariWidget(loggedIn, blockerMessage) {
+function injectShimariWidget(loggedIn, blockerMessage, integrations) {
   var mainWidgetElement = document.createElement('div');
   mainWidgetElement.className = "shimari-main-widget";
 
@@ -119,10 +119,16 @@ function injectShimariWidget(loggedIn, blockerMessage) {
   var messageElement = document.createElement('span');
   messageElement.className = "shimari-message";
   if (loggedIn) {
-    if (blockerMessage) {
-      messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games/latest\" class=\"shimari-link\" target=\"_blank\">Review</a> your last game.";
+    console.log('integrations', integrations);
+    console.log('integrations', integrations.length);
+    if (integrations && integrations.length > 0) {
+      if (blockerMessage) {
+        messageElement.innerHTML = blockerMessage == "focus" ? "Do a <a href=\"https://mirthturtle.com/go/pregame\" class=\"shimari-link\"> Pre-game Focus.</a>" : "<a href=\"https://mirthturtle.com/go/games/latest\" class=\"shimari-link\" target=\"_blank\">Review</a> your last game.";
+      } else {
+        messageElement.innerHTML = "Have a good game."
+      }
     } else {
-      messageElement.innerHTML = "Have a good game."
+      messageElement.innerHTML = "Add an <a href=\"https://mirthturtle.com/go/settings\" class=\"shimari-link\" target=\"_blank\">OGS integration</a>.";
     }
   } else {
     messageElement.innerHTML = "<a href=\"https://mirthturtle.com/go/login\" class=\"shimari-link\" target=\"_blank\">Log in</a> to activate.";
