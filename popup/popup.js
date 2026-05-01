@@ -33,6 +33,8 @@ chrome.runtime.sendMessage(
       document.getElementById('connecting-msg').style.display = 'none';
       document.getElementById('error-general').style.display = 'inline-block';
     }
+    // set the year
+    document.getElementById('date-year').innerHTML = new Date().getFullYear();
   }
 );
 
