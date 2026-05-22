@@ -66,9 +66,11 @@ function clearAnyExtensionCallouts() {
 function addSpeedBlockRemover() {
   // remove temporary speed blocker on any goban click
   let gobans = document.getElementsByClassName("goban-container");
-  for (let i = 0; i < gobans.length; i++) {
-    gobans[i].addEventListener('click', makeGobanClickableAgain, false);
-  }
+  window.setTimeout(() => {
+    for (let i = 0; i < gobans.length; i++) {
+      gobans[i].addEventListener('click', makeGobanClickableAgain, false);
+    }
+  }, gobans.length == 0 ? 1000 : 0) // wait a second if no goban object exists yet
 }
 
 // check localstorage for blockers
