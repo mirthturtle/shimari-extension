@@ -485,7 +485,7 @@ function getUsernameFor(color) {
 // returns char or false
 function findGameStatusOnPage() {
   let rawStatusString;
-  let gameStateDiv = document.getElementsByClassName("game-state")[0];
+  let gameStateDiv = document.getElementsByClassName("game-state-header")[0];
   if (gameStateDiv) {
     rawStatusString = gameStateDiv.children[0].innerHTML;
     // if the move highlighter is also in game-state div, it's pushed the status up
@@ -541,7 +541,7 @@ function getRandomInt(min, max) {
 }
 
 function createAnimationOverlay() {
-  const gobanElement = document.querySelectorAll('.center-col')[0];
+  const gobanElement = document.querySelectorAll('.GobanView-center')[0];
 
   var overlay = document.createElement('div');
   overlay.className = "shimari-animation-overlay";
