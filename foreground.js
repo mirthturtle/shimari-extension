@@ -479,7 +479,12 @@ function addHighlightContainer() {
 }
 
 function getUsernameFor(color) {
-  return document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0].getElementsByClassName('Player-username')[0].innerHTML;
+  let nameContainer = document.getElementsByClassName(`${(color === "B" ? 'black' : 'white')} player-name-container`)[0];
+  if (nameContainer) {
+    return nameContainer.getElementsByClassName('Player-username')[0].innerHTML;
+  } else {
+    return color;
+  }
 }
 
 // returns char or false
@@ -541,8 +546,7 @@ function getRandomInt(min, max) {
 }
 
 function createAnimationOverlay() {
-  const gobanElement = document.querySelectorAll('.GobanView-center')[0];
-
+  const gobanElement = document.querySelectorAll('.GobanView-stage')[0];
   var overlay = document.createElement('div');
   overlay.className = "shimari-animation-overlay";
   gobanElement.insertBefore(overlay, gobanElement.firstChild);
